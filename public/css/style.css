@@ -199,6 +199,8 @@ body {
 
   .mobile-search {
     margin-right: 0 !important;
+    min-width: 100px;
+    flex-shrink: 1;
   }
 
   /* Padding for fixed bottom bar */
