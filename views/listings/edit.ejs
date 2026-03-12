@@ -1,0 +1,202 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row mt-5 mb-5">
+  <div class="col-12 col-md-8 col-lg-6 offset-md-2 offset-lg-3">
+    
+    <div class="mb-5">
+      <h2 class="fw-bold mb-2">Edit your place</h2>
+      <p class="text-muted fs-5">Update the details about your property or change the photos.</p>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+      <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation" enctype="multipart/form-data">
+        
+        <!-- 1. Basics -->
+        <h4 class="fw-bold mb-4">The basics</h4>
+        
+        <div class="mb-4">
+          <label for="title" class="form-label fw-bold text-dark mb-1">Title</label>
+          <input
+            name="listing[title]"
+            id="title"
+            value="<%= listing.title %>"
+            type="text"
+            class="form-control form-control-lg rounded-3 fs-6 p-3"
+            required
+          />
+          <div class="invalid-feedback">Please enter a title.</div>
+        </div>
+
+        <div class="mb-5">
+          <label for="description" class="form-label fw-bold text-dark mb-1">Description</label>
+          <textarea 
+            name="listing[description]" 
+            id="description"
+            required 
+            class="form-control rounded-3 p-3" 
+            rows="5"
+          ><%= listing.description %></textarea>
+          <div class="invalid-feedback">Please write a description.</div>
+        </div>
+
+        <hr class="mb-5">
+
+        <!-- 2. Location -->
+        <h4 class="fw-bold mb-4">Location</h4>
+        
+        <div class="mb-4">
+          <label for="country" class="form-label fw-bold text-dark mb-1">Country / Region</label>
+          <input
+            name="listing[country]"
+            id="country"
+            value="<%= listing.country %>"
+            type="text"
+            class="form-control form-control-lg rounded-3 fs-6 p-3"
+            required
+          />
+          <div class="invalid-feedback">Please specify the country.</div>
+        </div>
+
+        <div class="mb-5">
+          <label for="location" class="form-label fw-bold text-dark mb-1">City / Town</label>
+          <input
+            name="listing[location]"
+            id="location"
+            value="<%= listing.location %>"
+            type="text"
+            class="form-control form-control-lg rounded-3 fs-6 p-3"
+            required
+          />
+          <div class="invalid-feedback">Please specify the location.</div>
+        </div>
+
+        <div class="mb-5">
+          <label for="category" class="form-label fw-bold text-dark mb-1">Category</label>
+          <select 
+            name="listing[category]" 
+            id="category" 
+            class="form-select form-control-lg rounded-3 fs-6 p-3" 
+            required
+          >
+            <% const categories = ["Trending", "Rooms", "Iconic cities", "Mountains", "Castles", "Amazing pools", "Camping", "Farms", "Arctic", "Domes", "Boats"]; %>
+            <% for(let cat of categories) { %>
+              <option value="<%= cat %>" <%= listing.category === cat ? "selected" : "" %>><%= cat %></option>
+            <% } %>
+          </select>
+          <div class="invalid-feedback">Please select a category.</div>
+        </div>
+
+        <hr class="mb-5">
+
+        <!-- 3. Amenities -->
+        <h4 class="fw-bold mb-4">What this place offers</h4>
+        <p class="text-muted small mb-3">Select the amenities available at your place.</p>
+        
+        <div class="row row-cols-1 row-cols-sm-2 mb-5">
+          <% 
+            const amenityOptions = [
+              { name: "Wifi", icon: "fa-wifi" },
+              { name: "Kitchen", icon: "fa-kitchen-set" },
+              { name: "AC", icon: "fa-snowflake" },
+              { name: "Free parking", icon: "fa-car" },
+              { name: "TV", icon: "fa-tv" },
+              { name: "Pool", icon: "fa-person-swimming" },
+              { name: "Gym", icon: "fa-dumbbell" },
+              { name: "Workspace", icon: "fa-briefcase" },
+              { name: "Lake view", icon: "fa-water" },
+              { name: "Mountain view", icon: "fa-mountain" }
+            ];
+          %>
+          <% amenityOptions.forEach(amenity => { %>
+            <div class="col mb-3">
+              <div class="form-check d-flex align-items-center gap-3 border p-3 rounded-3 hover-bg-light cursor-pointer">
+                <input 
+                  class="form-check-input ms-0 mt-0" 
+                  type="checkbox" 
+                  name="listing[amenities]" 
+                  value="<%= amenity.name %>" 
+                  id="amenity-<%= amenity.name.replace(/\s+/g, '-').toLowerCase() %>"
+                  <%= listing.amenities.includes(amenity.name) ? "checked" : "" %>
+                >
+                <label class="form-check-label flex-grow-1 cursor-pointer" for="amenity-<%= amenity.name.replace(/\s+/g, '-').toLowerCase() %>">
+                  <i class="fa-solid <%= amenity.icon %> me-2 text-muted"></i> <%= amenity.name %>
+                </label>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+
+        <hr class="mb-5">
+
+        <!-- 4. Photos -->
+        <h4 class="fw-bold mb-4">Photos</h4>
+        
+        <div class="mb-4">
+          <label class="form-label fw-bold text-dark mb-2">Current Image</label>
+          <div class="rounded-4 overflow-hidden mb-4" style="height: 250px;">
+            <img src="<%= listing.image.url %>" class="w-100 h-100" style="object-fit: cover;" alt="current_listing_image">
+          </div>
+        </div>
+
+        <div class="mb-5 border rounded-4 p-4 bg-light text-center">
+          <i class="fa-regular fa-images fs-1 text-muted mb-3 d-block"></i>
+          
+          <div class="mb-4 text-start">
+            <label for="listingImage" class="form-label fw-bold text-dark mb-1">Upload new image</label>
+            <input
+              name="listingImage"
+              id="listingImage"
+              type="file"
+              class="form-control form-control-lg rounded-3 fs-6 bg-white"
+              accept="image/*"
+            />
+          </div>
+          
+          <div class="d-flex align-items-center mb-4">
+            <hr class="flex-grow-1">
+            <span class="px-3 text-muted small fw-bold text-uppercase">or</span>
+            <hr class="flex-grow-1">
+          </div>
+
+          <div class="text-start">
+            <label for="imageUrl" class="form-label fw-bold text-dark mb-1">Paste a new web link</label>
+            <input
+              name="listing[image]"
+              id="imageUrl"
+              placeholder="https://example.com/photo.jpg"
+              type="text"
+              class="form-control form-control-lg rounded-3 fs-6 p-3 bg-white"
+            />
+          </div>
+        </div>
+
+        <hr class="mb-5">
+
+        <!-- 5. Pricing -->
+        <h4 class="fw-bold mb-4">Pricing</h4>
+        
+        <div class="mb-5">
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 rounded-start-4 ps-4 fs-4 fw-bold text-muted">&#8377;</span>
+            <input
+              name="listing[price]"
+              id="price"
+              value="<%= listing.price %>"
+              class="form-control form-control-lg border-start-0 rounded-end-4 fs-1 py-3 fw-bold shadow-none"
+              style="outline: none; box-shadow: none;"
+              required
+            />
+          </div>
+          <div class="invalid-feedback mt-2">Please set a valid nightly price.</div>
+        </div>
+
+        <!-- Submit -->
+        <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+          <a href="/listings/<%= listing._id %>" class="text-dark fw-bold text-decoration-underline">Cancel</a>
+          <button class="btn btn-brand px-5 py-3 rounded-3 fw-bold text-white fs-5" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

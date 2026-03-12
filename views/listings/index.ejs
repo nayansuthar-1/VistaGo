@@ -1,0 +1,111 @@
+<% layout("/layouts/boilerplate") -%> 
+
+<body>
+  <!-- Category Carousel & Tax Toggle -->
+  <div class="filters-container mt-3 mb-2">
+    <div class="category-carousel-wrapper">
+      <div class="category-carousel">
+        <div class="category-item active">
+          <i class="fa-solid fa-fire"></i>
+          <p>Trending</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-solid fa-bed"></i>
+          <p>Rooms</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-solid fa-mountain-city"></i>
+          <p>Iconic cities</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-solid fa-mountain"></i>
+          <p>Mountains</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-brands fa-fort-awesome"></i>
+          <p>Castles</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-solid fa-person-swimming"></i>
+          <p>Amazing pools</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-solid fa-campground"></i>
+          <p>Camping</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-solid fa-tractor"></i>
+          <p>Farms</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-regular fa-snowflake"></i>
+          <p>Arctic</p>
+        </div>
+         <div class="category-item">
+          <i class="fa-solid fa-igloo"></i>
+          <p>Domes</p>
+        </div>
+        <div class="category-item">
+          <i class="fa-solid fa-ship"></i>
+          <p>Boats</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="tax-toggle-container">
+      <div class="tax-toggle">
+        <div class="form-check-reverse form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+          <label class="form-check-label fw-semibold" for="flexSwitchCheckDefault" style="font-size: 0.85rem;">Display total before taxes</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 gx-2 gx-md-4 mt-3" id="listings-container">
+    <% 
+      const categoriesList = ["Trending", "Rooms", "Iconic cities", "Mountains", "Castles", "Amazing pools", "Camping", "Farms", "Arctic", "Domes", "Boats"];
+    %>
+    <% for (let listing of allListings ){ 
+        let avgRating = "New";
+        if (listing.reviews && listing.reviews.length > 0) {
+          let total = 0;
+          for (let r of listing.reviews) {
+            total += r.rating;
+          }
+          avgRating = (total / listing.reviews.length).toFixed(1);
+        }
+    %>
+    <a href="/listings/<%= listing._id %>" class="listing-link listing-wrapper" data-category="<%= listing.category %>">
+      <div class="card listing-card h-100">
+        <div class="card-img-wrapper">
+          <img
+            src="<%= listing.image.url %>"
+            class="card-img-top"
+            alt="<%= listing.title %>"
+          />
+          <div class="card-img-overlay">
+            <% if(currUser && currUser.wishlist && currUser.wishlist.includes(listing._id)) { %>
+               <i class="fa-solid fa-heart heart-icon liked text-brand" data-id="<%= listing._id %>"></i>
+            <% } else { %>
+               <i class="fa-regular fa-heart heart-icon" style="height:10px;" data-id="<%= listing._id %>"></i>
+            <% } %>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-baseline mt-2 mb-1">
+            <p class="card-title fw-bold m-0 text-truncate" style="max-width: 75%; font-size: 0.95rem; line-height: 1.2;"><%= listing.location %>, <%= listing.country %></p>
+            <div class="card-rating d-flex align-items-center flex-shrink-0">
+              <i class="fa-solid fa-star me-1" style="font-size: 0.75rem;"></i><span style="font-size: 0.9rem;"><%= avgRating %></span>
+            </div>
+          </div>
+          <p class="card-text text-muted mb-0" style="font-size: 0.9rem; line-height: 1.2;">Added recently</p>
+          <p class="card-text mt-1" style="font-size: 0.95rem;">
+            <span class="fw-bold price-element" data-baseprice="<%= listing.price %>">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %></span> <span class="tax-text text-muted" style="display: none;"><i class="fa-solid fa-plus" style="font-size: 0.7rem;"></i> 18% GST</span> night
+          </p>
+        </div>
+      </div>
+    </a>
+    <% } %>
+  </div>
+</body>

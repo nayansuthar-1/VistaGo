@@ -1,0 +1,63 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row mt-5 mb-5">
+  <div class="col-12 col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-header bg-white border-bottom text-center py-3 rounded-top-4">
+        <h5 class="fw-bold mb-0">Finish signing up</h5>
+      </div>
+      <div class="card-body p-4 p-md-5">
+        <form action="/signup" method="POST" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <label for="username" class="form-label fw-bold small text-muted">Legal name (Username)</label>
+              <input
+                name="username"
+                id="username"
+                type="text"
+                placeholder="John Doe"
+                class="form-control form-control-lg rounded-3 fs-6 p-3"
+                required
+              />
+              <div class="valid-feedback">Looks good!</div>
+              <div class="form-text small">Make sure this matches the name on your government ID.</div>
+            </div>
+            
+            <div class="mb-3 mt-4">
+              <label for="email" class="form-label fw-bold small text-muted">Contact info</label>
+              <input
+                name="email"
+                id="email"
+                type="email"
+                placeholder="Email address"
+                class="form-control form-control-lg rounded-3 fs-6 p-3"
+                required
+              />
+              <div class="form-text small">We'll email you trip confirmations and receipts.</div>
+            </div>
+            
+            <div class="mb-4 mt-4">
+              <label for="password" class="form-label fw-bold small text-muted">Password</label>
+              <input
+                name="password"
+                id="password"
+                type="password"
+                placeholder="Password"
+                class="form-control form-control-lg rounded-3 fs-6 p-3"
+                required
+              />
+            </div>
+            
+            <p class="text-muted small mb-4">
+              By selecting <strong>Agree and continue</strong>, I agree to VistaGo's <a href="#" class="text-dark hover-underline fw-bold">Terms of Service</a>, <a href="#" class="text-dark hover-underline fw-bold">Payments Terms of Service</a>, and <a href="#" class="text-dark hover-underline fw-bold">Nondiscrimination Policy</a> and acknowledge the <a href="#" class="text-dark hover-underline fw-bold">Privacy Policy</a>.
+            </p>
+
+            <button class="btn w-100 py-3 rounded-3 fw-bold text-white fs-5" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Agree and continue</button>
+        </form>
+        
+        <div class="text-center mt-4">
+           <a href="/login" class="text-dark hover-underline fw-bold">Already have an account? Log in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

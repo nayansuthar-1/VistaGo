@@ -1,0 +1,63 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row mt-5 mb-5">
+  <div class="col-12 col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+    <div class="card shadow-lg border-0 rounded-4">
+      <div class="card-header bg-white border-bottom text-center py-3 rounded-top-4">
+        <h5 class="fw-bold mb-0">Log in</h5>
+      </div>
+      <div class="card-body p-4 p-md-5">
+        <h3 class="fw-bold mb-4">Welcome to VistaGo</h3>
+        
+        <form action="/login" method="POST" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <input
+                name="email"
+                id="email"
+                type="email"
+                class="form-control form-control-lg rounded-3 fs-6 p-3"
+                placeholder="Email address"
+                required
+              />
+              <div class="valid-feedback">Looks good!</div>
+            </div>
+            <div class="mb-4">
+              <input
+                name="password"
+                id="password"
+                type="password"
+                class="form-control form-control-lg rounded-3 fs-6 p-3"
+                placeholder="Password"
+                required
+              />
+            </div>
+            
+            <p class="text-muted small mb-4">
+              We'll call or text you to confirm your number. Standard message and data rates apply. <a href="#" class="text-dark hover-underline fw-bold">Privacy Policy</a>
+            </p>
+            
+            <button class="btn btn-brand w-100 py-3 rounded-3 fw-bold text-white fs-5" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Continue</button>
+        </form>
+        
+        <div class="d-flex align-items-center my-4">
+          <hr class="flex-grow-1">
+          <span class="px-2 text-muted small">or</span>
+          <hr class="flex-grow-1">
+        </div>
+        
+        <div class="d-flex flex-column gap-3">
+          <button class="btn btn-outline-dark w-100 py-3 rounded-3 fw-bold d-flex justify-content-between align-items-center">
+            <i class="fa-brands fa-google fs-5"></i>
+            <span>Continue with Google</span>
+            <span style="width: 20px;"></span> <!-- spacer for perfect centering -->
+          </button>
+          <a href="/signup" class="btn btn-outline-dark w-100 py-3 rounded-3 fw-bold d-flex justify-content-between align-items-center">
+            <i class="fa-regular fa-envelope fs-5"></i>
+            <span>Continue with Email (Sign Up)</span>
+            <span style="width: 20px;"></span> <!-- spacer -->
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

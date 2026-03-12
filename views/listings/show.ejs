@@ -1,0 +1,467 @@
+<% layout("/layouts/boilerplate") -%>
+<script>
+  document.body.classList.add("show-page-body");
+</script>
+<% 
+  let avgRating = "New";
+  let reviewLen = listing.reviews ? listing.reviews.length : 0;
+  if (reviewLen > 0) {
+    let total = 0;
+    for (let r of listing.reviews) {
+      total += r.rating;
+    }
+    avgRating = (total / reviewLen).toFixed(1);
+  }
+%>
+
+<div class="row m-0 p-0 justify-content-center">
+  <div class="col-12 col-md-10 px-0 px-md-3">
+    <!-- Desktop Header (Hide on mobile) -->
+    <div class="listing-header d-none d-md-block mt-4 mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center flex-wrap gap-2 text-muted fw-medium">
+          <a href="#" class="text-dark fw-bold text-decoration-none" style="font-size: 1.1rem;"><%= listing.location %>, <%= listing.country %></a>
+        </div>
+        <div class="d-flex gap-3">
+          <button id="share-btn" class="btn btn-sm btn-light border-0"><i class="fa-solid fa-arrow-up-from-bracket me-1"></i> Share</button>
+          <% if(currUser && currUser.wishlist && currUser.wishlist.includes(listing._id)) { %>
+            <button id="save-btn" class="btn btn-sm btn-light border-0" data-id="<%= listing._id %>"><i class="fa-solid fa-heart me-1 text-brand"></i> Saved</button>
+          <% } else { %>
+            <button id="save-btn" class="btn btn-sm btn-light border-0" data-id="<%= listing._id %>"><i class="fa-regular fa-heart me-1"></i> Save</button>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Image Section -->
+    <div class="listing-hero mb-0 mb-md-5 overflow-hidden position-relative">
+      <div class="floating-controls d-flex d-md-none justify-content-between w-100 px-3 py-3 position-absolute top-0 start-0" style="z-index: 10;">
+        <a href="/listings" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; padding: 0;">
+          <i class="fa-solid fa-chevron-left" style="font-size: 1.1rem;"></i>
+        </a>
+        <div class="d-flex gap-3">
+          <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; padding: 0;">
+            <i class="fa-solid fa-arrow-up-from-bracket" style="font-size: 1rem;"></i>
+          </button>
+          <% if(currUser && currUser.wishlist && currUser.wishlist.includes(listing._id)) { %>
+            <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center heart-icon liked" style="width: 42px; height: 42px; padding: 0;" data-id="<%= listing._id %>">
+              <i class="fa-solid fa-heart text-brand" style="font-size: 1.1rem;"></i>
+            </button>
+          <% } else { %>
+            <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center heart-icon" style="width: 42px; height: 42px; padding: 0;" data-id="<%= listing._id %>">
+              <i class="fa-regular fa-heart" style="font-size: 1.1rem;"></i>
+            </button>
+          <% } %>
+        </div>
+      </div>
+      
+      <img
+        src="<%= listing.image.url %>"
+        alt="listing_image"
+      />
+    </div>
+
+    <!-- Detail Content (Overlap on mobile) -->
+    <div class="listing-content-overlap bg-white p-0 p-md-0">
+      <!-- Mobile Header (Visible only on mobile, centered below image) -->
+      <div class="d-block d-md-none px-4 pt-5 pb-3 text-center border-bottom mb-4">
+         <h2 class="fw-bold mb-3" style="font-size: 1.5rem;"><%= listing.title %></h2>
+         <div class="d-flex flex-column align-items-center gap-1 text-muted fw-medium fs-6">
+            <span class="text-dark"><%= listing.category %> in <%= listing.location %>, <%= listing.country %></span>
+            <div class="d-flex align-items-center gap-1">
+              <span>2 guests</span>
+              <span>&middot;</span>
+              <span>1 bedroom</span>
+              <span>&middot;</span>
+              <span>1 bed</span>
+              <span>&middot;</span>
+              <span>1 bath</span>
+            </div>
+          </div>
+      </div>
+
+      <!-- Main Content: Two Columns -->
+      <div class="row px-3 px-md-0 m-0">
+      <!-- Left Column: Details -->
+      <div class="col-12 col-md-7 pe-md-5">
+        <div class="d-flex justify-content-between align-items-center pb-4 border-bottom mobile-hide">
+          <div>
+            <h4 class="fw-bold mb-1">Room in a rental unit hosted by <%= listing.owner ? listing.owner.username : "Airbnb Host" %></h4>
+            <p class="text-muted mb-0">2 guests &middot; 1 bedroom &middot; 1 bed &middot; 1 bath</p>
+          </div>
+          <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px;">
+             <i class="fa-solid fa-user fs-4"></i>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div class="py-4 border-bottom">
+          <div class="d-flex mb-3">
+            <i class="fa-solid fa-door-open fs-4 me-4 mt-1"></i>
+            <div>
+              <h6 class="fw-bold mb-1">Self check-in</h6>
+              <p class="text-muted mb-0">Check yourself in with the lockbox.</p>
+            </div>
+          </div>
+          <div class="d-flex mb-3 mobile-hide">
+            <i class="fa-solid fa-medal fs-4 me-4 mt-1"></i>
+            <div>
+              <h6 class="fw-bold mb-1"><%= listing.owner ? listing.owner.username : "This host" %> is a Superhost</h6>
+              <p class="text-muted mb-0">Superhosts are experienced, highly rated hosts who are committed to providing great stays for guests.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="py-4 border-bottom">
+          <p class="card-text fs-6 lh-lg"><%= listing.description %></p>
+        </div>
+
+        <!-- Host Actions (Edit/Delete) -->
+        <% if (currUser && listing.owner && currUser._id.equals(listing.owner._id)) { %>
+        <div class="py-4 border-bottom d-flex gap-3">
+          <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark px-4 fw-bold rounded-3">Edit Listing</a>
+          <form method="POST" action="/listings/<%=listing._id%>?_method=DELETE" class="m-0">
+            <button class="btn btn-outline-danger px-4 fw-bold rounded-3">Delete</button>
+          </form>
+        </div>
+        <% } %>
+
+        <!-- Amenities -->
+        <div class="py-4 border-bottom">
+          <h4 class="fw-bold mb-4">What this place offers</h4>
+          <% if (listing.amenities && listing.amenities.length > 0) { %>
+            <div class="row row-cols-2 g-3 mb-4">
+              <% 
+                const amenityIcons = {
+                  "Wifi": "fa-wifi",
+                  "Kitchen": "fa-kitchen-set",
+                  "AC": "fa-snowflake",
+                  "Free parking": "fa-car",
+                  "TV": "fa-tv",
+                  "Pool": "fa-person-swimming",
+                  "Gym": "fa-dumbbell",
+                  "Workspace": "fa-briefcase",
+                  "Lake view": "fa-water",
+                  "Mountain view": "fa-mountain"
+                };
+              %>
+              <% listing.amenities.forEach(amenity => { %>
+                <div class="col d-flex align-items-center gap-3">
+                  <i class="fa-solid <%= amenityIcons[amenity] || 'fa-check' %> fs-5 p-2"></i> 
+                  <span><%= amenity %></span>
+                </div>
+              <% }) %>
+            </div>
+          <% } else { %>
+            <p class="text-muted">No amenities listed for this property.</p>
+          <% } %>
+          <% if (listing.amenities && listing.amenities.length > 4) { %>
+            <button class="btn border border-secondary fw-bold rounded-3 px-4 py-2 bg-white" data-bs-toggle="modal" data-bs-target="#amenitiesModal">Show all <%= listing.amenities.length %> amenities</button>
+          <% } %>
+        </div>
+      </div>
+
+      <!-- Right Column: Sticky Booking Widget -->
+      <div class="col-12 col-md-5">
+        <div class="card shadow-lg border-0 rounded-4 sticky-top p-4 d-none d-md-block" style="top: 8rem; z-index: 10;">
+          <div class="d-flex align-items-baseline mb-4">
+            <h4 class="fw-bold mb-0">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %></h4>
+            <div id="booked-dates" data-dates='<%- JSON.stringify(bookedDates) %>'></div>
+            <div id="listing-price" data-price="<%= listing.price %>" class="d-none"></div>
+            <span class="text-muted ms-1 text-lowercase">night</span>
+          </div>
+
+          <form action="/listings/<%= listing._id %>/bookings" method="POST" id="booking-form">
+            <div class="border rounded-4 mb-3">
+              <div class="d-flex border-bottom pointer-cursor" id="date-picker-trigger">
+                <div class="p-2 px-3 border-end w-50">
+                  <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Check-in</label>
+                  <input type="text" name="booking[checkIn]" id="checkIn" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
+                </div>
+                <div class="p-2 px-3 w-50">
+                  <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Checkout</label>
+                  <input type="text" name="booking[checkOut]" id="checkOut" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
+                </div>
+              </div>
+              <div class="px-3 py-2 position-relative" style="cursor: pointer;">
+                <div id="guest-dropdown-toggle">
+                  <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem; cursor: pointer;">Guests</label>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span id="guest-count-display" class="fs-6">1 guest</span>
+                    <i class="fa-solid fa-chevron-down small text-muted"></i>
+                  </div>
+                </div>
+                
+                <!-- Airbnb-style Guest Dropdown -->
+                <div id="guest-dropdown" class="position-absolute start-0 end-0 bg-white border rounded-3 shadow-lg p-3 mt-2 d-none" style="z-index: 1000; top: 100%;">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                      <div class="fw-bold fs-6">Guests</div>
+                      <div class="text-muted small">Ages 13 or above</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                      <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-minus" style="width: 32px; height: 32px; padding: 0;" disabled>-</button>
+                      <span id="guest-count-val" class="fw-bold">1</span>
+                      <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-plus" style="width: 32px; height: 32px; padding: 0;">+</button>
+                    </div>
+                  </div>
+                  <div class="text-end mt-2">
+                    <button type="button" id="close-guest-dropdown" class="btn btn-sm btn-dark px-3 rounded-2 fw-bold">Close</button>
+                  </div>
+                </div>
+                
+                <input type="hidden" name="booking[guests]" id="guests-input" value="1">
+              </div>
+            </div>
+
+            <input type="hidden" name="booking[totalPrice]" id="final-total" value="0">
+            <input type="hidden" name="booking[nights]" id="total-nights" value="0">
+
+            <button type="submit" id="reserve-btn" class="btn btn-brand w-100 py-3 rounded-3 fw-bold text-white fs-5 mb-3" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Reserve</button>
+          </form>
+          
+          <div id="price-summary" class="d-none">
+            <div class="text-center text-muted mb-4" style="font-size: 0.9rem;">You won't be charged yet</div>
+            
+            <div class="d-flex justify-content-between mb-2 text-decoration-underline text-muted">
+              <span id="night-calc-label">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %> x 0 nights</span>
+              <span id="base-price-total">&#8377; 0</span>
+            </div>
+            <div class="d-flex justify-content-between pb-3 border-bottom text-decoration-underline text-muted">
+              <span>VistaGo service fee</span>
+              <span id="service-fee">&#8377; 0</span>
+            </div>
+            
+            <div class="d-flex justify-content-between mt-3 fw-bold fs-5">
+              <span>Total before taxes</span>
+              <span id="final-price-display">&#8377; 0</span>
+            </div>
+          </div>
+
+          <div id="price-placeholder" class="text-center text-muted mt-3 py-3 border-top">
+            Select dates to see total price
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Reviews Section -->
+    <div id="reviews" class="py-5 border-top border-bottom mt-2">
+      <div class="d-flex align-items-center gap-2 mb-4">
+        <i class="fa-solid fa-star fs-3"></i>
+        <h3 class="fw-bold m-0"><%= avgRating %> &middot; <%= reviewLen %> reviews</h3>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 g-5 mb-5">
+        <% for (review of listing.reviews) { %>
+          <div class="col">
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                <i class="fa-solid fa-user fs-4"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold m-0"><%= review.author ? review.author.username : "Anonymous" %></h6>
+                <p class="text-muted m-0" style="font-size: 0.85rem;"><%= review.createdAt.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) %></p>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-center mb-2">
+              <div class="d-flex text-dark small gap-1">
+                <% for(let i=1; i<=5; i++) { %>
+                  <% if(i <= review.rating) { %>
+                    <i class="fa-solid fa-star" style="font-size: 0.8rem;"></i>
+                  <% } else { %>
+                    <i class="fa-regular fa-star text-muted" style="font-size: 0.8rem;"></i>
+                  <% } %>
+                <% } %>
+              </div>
+              <span class="ms-2 fw-medium text-muted" style="font-size: 0.9rem;">&middot; 1 week ago</span>
+            </div>
+
+            <p class="mb-3" style="font-size: 1rem; line-height: 1.5rem;"><%= review.comment %></p>
+
+            <% if (currUser) { %>
+            <form method="POST" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE">
+              <button class="btn btn-sm btn-outline-dark fw-bold rounded-3">Delete</button>
+            </form>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+
+      <% if (currUser) { %>
+      <div class="bg-light p-4 rounded-4 mt-2 border">
+        <h4 class="fw-bold mb-3">Leave a review</h4>
+        <form action="/listings/<%=listing.id %>/reviews" method="POST" novalidate class="needs-validation">
+          <div class="mb-4">
+            <label class="form-label fw-bold">Rating</label>
+            <div class="star-rating fs-4" style="direction: rtl; text-align: left; display: inline-flex;">
+              <input type="radio" id="star5" name="review[rating]" value="5" />
+              <label for="star5" title="5 stars"><i class="fa-solid fa-star"></i></label>
+              <input type="radio" id="star4" name="review[rating]" value="4" />
+              <label for="star4" title="4 stars"><i class="fa-solid fa-star"></i></label>
+              <input type="radio" id="star3" name="review[rating]" value="3" checked />
+              <label for="star3" title="3 stars"><i class="fa-solid fa-star"></i></label>
+              <input type="radio" id="star2" name="review[rating]" value="2" />
+              <label for="star2" title="2 stars"><i class="fa-solid fa-star"></i></label>
+              <input type="radio" id="star1" name="review[rating]" value="1" />
+              <label for="star1" title="1 star"><i class="fa-solid fa-star"></i></label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="comment" class="form-label fw-bold">Comments</label>
+            <textarea name="review[comment]" id="comment" cols="30" rows="4" class="form-control rounded-3" placeholder="Share your experience..." required></textarea>
+            <div class="invalid-feedback">Please add some comments.</div>
+          </div>
+          <button class="btn btn-outline-dark fw-bold px-4 py-2 rounded-3">Submit review</button>
+        </form>
+      </div>
+      <% } else { %>
+        <div class="alert alert-secondary border-0 text-center rounded-4 mb-0 py-4">
+          <p class="mb-3 fs-5">Sign in to leave a review</p>
+          <a href="/login" class="btn btn-dark fw-bold px-4 py-2 rounded-3">Log in</a>
+        </div>
+      <% } %>
+    </div>
+    
+    <!-- Map Section -->
+    <div class="col-12 mt-5 mb-5 px-3 px-md-0">
+      <h4 class="fw-bold mb-4">Where you'll be</h4>
+      <div id="map" class="rounded-4 overflow-hidden border" style="height: 480px; background-color: #f7f7f7; display: flex; align-items: center; justify-content: center;">
+         <div class="text-center p-4">
+            <i class="fa-solid fa-map-location-dot fs-1 text-muted mb-3"></i>
+            <h5 class="text-muted">Map view coming soon</h5>
+            <p class="text-muted small">Location details for <%= listing.location %>, <%= listing.country %> available after booking.</p>
+         </div>
+      </div>
+    </div>
+    </div> <!-- End listing-content-overlap -->
+  </div> <!-- End col-12 col-md-10 -->
+</div> <!-- End row -->
+
+<!-- Mobile Bottom Booking Bar -->
+<div class="mobile-booking-bar d-md-none fixed-bottom bg-white border-top p-3" style="z-index: 2000;">
+  <div class="container-fluid d-flex justify-content-between align-items-center px-0">
+    <div class="d-flex flex-column">
+      <div class="d-flex align-items-baseline">
+        <span class="fw-bold fs-5">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %></span>
+        <span class="text-muted ms-1 small">night</span>
+      </div>
+      <a href="#booking-form-mobile" class="text-dark text-decoration-underline small fw-bold"><u>Select dates</u></a>
+    </div>
+    <button type="button" class="btn btn-brand px-4 py-2 rounded-3 fw-bold text-white" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);" onclick="document.getElementById('booking-form-mobile').scrollIntoView({behavior: 'smooth'})">Reserve</button>
+  </div>
+</div>
+
+<!-- Mobile Booking Form (Visible only on mobile, below details) -->
+<div class="col-12 d-md-none px-3" id="booking-form-mobile">
+  <div class="card shadow border rounded-4 p-4 mt-4">
+    <div class="d-flex align-items-baseline mb-4">
+      <h4 class="fw-bold mb-0">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %></h4>
+      <span class="text-muted ms-1">night</span>
+    </div>
+    
+    <form action="/listings/<%= listing._id %>/bookings" method="POST">
+      <div class="border rounded-4 mb-3">
+        <div class="d-flex border-bottom pointer-cursor">
+          <div class="p-2 px-3 border-end w-50">
+            <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Check-in</label>
+            <input type="text" name="booking[checkIn]" id="checkInMobile" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
+          </div>
+          <div class="p-2 px-3 w-50">
+            <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Checkout</label>
+            <input type="text" name="booking[checkOut]" id="checkOutMobile" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
+          </div>
+        </div>
+        <div class="px-3 py-2 position-relative" style="cursor: pointer;">
+          <div id="guest-dropdown-toggle-mobile">
+            <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem; cursor: pointer;">Guests</label>
+            <div class="d-flex justify-content-between align-items-center">
+              <span id="guest-count-display-mobile" class="fs-6">1 guest</span>
+              <i class="fa-solid fa-chevron-down small text-muted"></i>
+            </div>
+          </div>
+          
+          <!-- Mobile Guest Dropdown -->
+          <div id="guest-dropdown-mobile" class="position-absolute start-0 end-0 bg-white border rounded-3 shadow-lg p-3 mt-2 d-none" style="z-index: 1000; top: 100%;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <div class="fw-bold fs-6">Guests</div>
+                <div class="text-muted small">Ages 13 or above</div>
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-minus-mobile" style="width: 32px; height: 32px; padding: 0;" disabled>-</button>
+                <span id="guest-count-val-mobile" class="fw-bold">1</span>
+                <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-plus-mobile" style="width: 32px; height: 32px; padding: 0;">+</button>
+              </div>
+            </div>
+            <div class="text-end mt-2">
+              <button type="button" id="close-guest-dropdown-mobile" class="btn btn-sm btn-dark px-3 rounded-2 fw-bold">Close</button>
+            </div>
+          </div>
+          
+          <input type="hidden" name="booking[guests]" id="guests-input-mobile" value="1">
+        </div>
+      </div>
+
+      <!-- Hidden inputs for mobile price details -->
+      <input type="hidden" name="booking[totalPrice]" id="final-total-mobile" value="0">
+      <input type="hidden" name="booking[nights]" id="total-nights-mobile" value="0">
+
+      <button type="submit" class="btn btn-brand w-100 py-3 rounded-3 fw-bold text-white fs-5 mb-3" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Reserve</button>
+      
+      <div id="price-summary-mobile" class="d-none">
+        <div class="d-flex justify-content-between mb-2 text-muted small">
+          <span id="night-calc-label-mobile">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %> x 0 nights</span>
+          <span id="base-price-total-mobile">&#8377; 0</span>
+        </div>
+        <div class="d-flex justify-content-between fw-bold border-top pt-2">
+          <span>Total before taxes</span>
+          <span id="final-price-display-mobile">&#8377; 0</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Amenities Modal -->
+<div class="modal fade" id="amenitiesModal" tabindex="-1" aria-labelledby="amenitiesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-bottom-0 pb-0 mt-2 ms-2">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 p-md-5 pt-2">
+        <h3 class="fw-bold mb-4" id="amenitiesModalLabel">What this place offers</h3>
+        
+        <div class="row row-cols-1 g-4">
+          <% if (listing.amenities && listing.amenities.length > 0) { %>
+            <% 
+              const amenityIcons = {
+                "Wifi": "fa-wifi",
+                "Kitchen": "fa-kitchen-set",
+                "AC": "fa-snowflake",
+                "Free parking": "fa-car",
+                "TV": "fa-tv",
+                "Pool": "fa-person-swimming",
+                "Gym": "fa-dumbbell",
+                "Workspace": "fa-briefcase",
+                "Lake view": "fa-water",
+                "Mountain view": "fa-mountain"
+              };
+            %>
+            <% listing.amenities.forEach(amenity => { %>
+              <div class="col d-flex align-items-center gap-3 pb-3 border-bottom">
+                <i class="fa-solid <%= amenityIcons[amenity] || 'fa-check' %> fs-5 text-muted" style="width: 30px;"></i> 
+                <span class="fs-5"><%= amenity %></span>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <p class="text-muted">No amenities listed.</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

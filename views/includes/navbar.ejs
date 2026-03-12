@@ -1,0 +1,66 @@
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top" style="height: 5rem;">
+  <div class="container-fluid px-4 align-items-center">
+    <!-- Brand -->
+    <a class="navbar-brand d-none d-md-flex align-items-center me-0" href="/listings">
+      <i class="fa-brands fa-airbnb brand-icon"></i>
+      <span class="brand-text fw-bold fs-4 ms-1 d-none d-lg-block">vistago</span>
+    </a>
+
+    <!-- Center Search Pill (Desktop) -->
+    <div class="nav-search d-none d-md-flex mx-auto">
+      <form class="search-btn rounded-pill shadow-sm border d-flex align-items-center bg-white p-1" action="/listings" method="GET">
+        <input type="text" name="location" class="search-input border-0 bg-transparent fw-medium px-3 text-dark focus-ring-0" placeholder="Search destinations" style="outline: none; box-shadow: none; width: 250px;">
+        <button type="submit" class="btn search-icon-bg bg-brand text-white rounded-circle d-flex align-items-center justify-content-center border-0 p-0 ms-2" style="width: 38px; height: 38px;">
+          <i class="fa-solid fa-magnifying-glass" style="font-size: 0.9rem;"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- Mobile Search Pill -->
+    <div class="mobile-search d-flex d-md-none flex-grow-1 justify-content-center mx-2">
+      <div class="mobile-search-pill d-flex align-items-center bg-white border rounded-pill shadow-sm px-3 py-2 w-100" style="max-width: 300px; cursor: pointer;">
+        <i class="fa-solid fa-magnifying-glass text-brand me-3"></i>
+        <div class="d-flex flex-column">
+          <span class="fw-bold text-dark" style="font-size: 0.85rem;">Where to?</span>
+          <span class="text-muted" style="font-size: 0.75rem;">Anywhere • Any week • Add guests</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Menu -->
+    <div class="d-flex align-items-center ms-auto ms-md-auto">
+      <a class="nav-link fw-bold d-none d-md-block px-3 rounded-pill hover-bg-light" href="/listings/new">Host your home</a>
+      <div class="nav-link rounded-pill hover-bg-light px-3 py-2 d-none d-md-block">
+        <i class="fa-solid fa-globe"></i>
+      </div>
+      
+      <!-- Profile Dropdown Menu -->
+      <div class="dropdown ms-1 ms-md-2">
+        <button class="btn border rounded-pill shadow-sm d-flex align-items-center bg-white profile-btn gap-2 px-2 py-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fa-solid fa-bars text-muted shadow-none"></i>
+          <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
+            <i class="fa-solid fa-user"></i>
+          </div>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="border-radius: 12px; min-width: 240px; padding-top: 0.5rem; padding-bottom: 0.5rem;">
+          <% if (!currUser) { %>
+            <li><a class="dropdown-item fw-bold py-2" href="/signup">Sign up</a></li>
+            <li><a class="dropdown-item py-2" href="/login">Log in</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item py-2" href="/listings/new">Host your home</a></li>
+            <li><a class="dropdown-item py-2" href="#">Help</a></li>
+          <% } else { %>
+            <li><a class="dropdown-item fw-bold py-2" href="#">Messages</a></li>
+            <li><a class="dropdown-item fw-bold py-2" href="/bookings">My Bookings</a></li>
+            <li><a class="dropdown-item fw-bold py-2" href="/wishlist">Wishlists</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item py-2" href="/listings/new">Host your home</a></li>
+            <li><a class="dropdown-item py-2" href="#">Account</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item py-2" href="/logout">Log out</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

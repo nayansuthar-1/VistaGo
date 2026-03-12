@@ -1,0 +1,60 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row mt-4 mb-5">
+  <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+    <h2 class="fw-bold mb-4">My Bookings</h2>
+
+    <% if (allBookings && allBookings.length > 0) { %>
+      <div class="row row-cols-1 row-cols-md-2 g-4">
+        <% for(let booking of allBookings) { %>
+          <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden listing-card">
+              <div class="position-relative" style="height: 200px;">
+                <img src="<%= booking.listing.image.url %>" class="card-img-top h-100 w-100" style="object-fit: cover;" alt="listing-image">
+                <div class="position-absolute top-0 end-0 p-3">
+                   <span class="badge bg-white text-dark shadow-sm">Confirmed</span>
+                </div>
+              </div>
+              <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-1"><%= booking.listing.title %></h5>
+                <p class="text-muted mb-3"><%= booking.listing.location %>, <%= booking.listing.country %></p>
+                
+                <div class="d-flex justify-content-between border-top border-bottom py-3 mb-3">
+                  <div class="text-center">
+                    <div class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Check-in</div>
+                    <div class="fw-bold"><%= booking.checkIn.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></div>
+                  </div>
+                  <div class="vr"></div>
+                  <div class="text-center">
+                    <div class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Checkout</div>
+                    <div class="fw-bold"><%= booking.checkOut.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></div>
+                  </div>
+                  <div class="vr"></div>
+                  <div class="text-center">
+                    <div class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Guests</div>
+                    <div class="fw-bold"><%= booking.guests %></div>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="text-muted small">Total Paid</div>
+                    <div class="fs-5 fw-bold text-dark">&#8377; <%= booking.totalPrice.toLocaleString() %></div>
+                  </div>
+                  <a href="/listings/<%= booking.listing._id %>" class="btn btn-outline-dark rounded-3 px-4 fw-bold">View Booking</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="text-center py-5 bg-light rounded-4 border">
+        <i class="fa-solid fa-calendar-xmark fs-1 text-muted mb-3"></i>
+        <h4 class="fw-bold">No bookings yet</h4>
+        <p class="text-muted mb-4">Explore our listings and book your next stay!</p>
+        <a href="/listings" class="btn btn-brand text-white px-5 py-2 fw-bold rounded-3" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Browse Listings</a>
+      </div>
+    <% } %>
+  </div>
+</div>
