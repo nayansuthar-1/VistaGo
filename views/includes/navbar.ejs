@@ -18,15 +18,12 @@
 
     <!-- Mobile Search Pill -->
     <div class="mobile-search d-flex d-md-none flex-grow-1 justify-content-center mx-2 overflow-hidden">
-      <a href="/listings" class="text-decoration-none w-100 d-flex justify-content-center">
-        <div class="mobile-search-pill d-flex align-items-center bg-white border rounded-pill shadow-sm px-3 py-1 w-100" style="max-width: 280px; cursor: pointer; height: 42px;">
-          <i class="fa-solid fa-magnifying-glass text-brand me-3"></i>
-          <div class="d-flex flex-column justify-content-center">
-            <span class="fw-bold text-dark" style="font-size: 0.8rem; line-height: 1.2;">Where to?</span>
-            <span class="text-muted" style="font-size: 0.7rem; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Anywhere • Any week</span>
-          </div>
-        </div>
-      </a>
+      <form class="rounded-pill shadow-sm border d-flex align-items-center bg-white p-1 w-100" action="/listings" method="GET" style="max-width: 200px;">
+        <input type="text" name="location" class="search-input border-0 bg-transparent fw-medium px-2 text-dark focus-ring-0" placeholder="Search" style="outline: none; box-shadow: none; width: 100%; font-size: 0.8rem;">
+        <button type="submit" class="btn search-icon-bg bg-brand text-white rounded-circle d-flex align-items-center justify-content-center border-0 p-0 ms-auto" style="min-width: 28px; width: 28px; height: 28px; flex-shrink: 0;">
+          <i class="fa-solid fa-magnifying-glass" style="font-size: 0.75rem;"></i>
+        </button>
+      </form>
     </div>
 
     <!-- Right Menu -->
@@ -65,4 +62,4 @@
       </div>
     </div>
   </div>
-</nav>
+</nav>

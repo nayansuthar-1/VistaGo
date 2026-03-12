@@ -72,15 +72,15 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
 }
 
-/* Mobile Search Pill */
-.mobile-search-pill {
-  transition: box-shadow 0.2s ease;
-  user-select: none;
-  -webkit-user-select: none;
+/* Mobile Search Improvements */
+.mobile-search .search-btn {
+  height: 38px;
+  transition: all 0.2s ease;
 }
 
-.mobile-search-pill:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+.mobile-search .search-input::placeholder {
+  color: #717171;
+  font-size: 0.8rem;
 }
 
 /* Filters & Category Carousel */
