@@ -58,13 +58,17 @@ const sessionOptions = {
 
 main()
   .then(() => {
-    console.log("connected to DB");
+    console.log("Connected to MongoDB via Atlas");
   })
   .catch((err) => {
-    console.log(err);
+    console.log("DB Connection Error:", err.message);
   });
 
 async function main() {
+  if (!dbUrl) {
+    console.error("FATAL ERROR: MONGO_ATLAS_URL is not defined in environment variables.");
+    process.exit(1);
+  }
   await mongoose.connect(dbUrl);
 }
 
