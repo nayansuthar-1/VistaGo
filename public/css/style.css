@@ -75,6 +75,8 @@ body {
 /* Mobile Search Pill */
 .mobile-search-pill {
   transition: box-shadow 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .mobile-search-pill:hover {
