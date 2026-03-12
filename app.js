@@ -5,12 +5,13 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const port = 3000;
+const port = process.env.PORT || 3000;
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -27,8 +28,23 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+const dbUrl = process.env.MONGO_ATLAS_URL || "mongodb://127.0.0.1:27017/vistago";
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: {
+    secret: process.env.SECRET || "mysupersecretcode",
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on("error", (err) => {
+  console.log("ERROR in MONGO SESSION STORE", err);
+});
+
 const sessionOptions = {
-  secret: "mysupersecretcode",
+  store,
+  secret: process.env.SECRET || "mysupersecretcode",
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -38,7 +54,6 @@ const sessionOptions = {
   },
 };
 
-const MONGO_URL = process.env.MONGO_ATLAS_URL || "mongodb://127.0.0.1:27017/vistago";
 
 main()
   .then(() => {
@@ -49,7 +64,7 @@ main()
   });
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
 }
 
 app.listen(port, () => {
@@ -57,7 +72,7 @@ app.listen(port, () => {
 });
 
 app.get("/", async (req, res) => {
-  res.send("hy");
+  res.redirect("/listings");
 });
 
 app.use(session(sessionOptions));

@@ -7,10 +7,8 @@ const ExpressError = require("../utils/ExpressError.js");
 const Listing = require("../models/listing.js");
 const User = require("../models/user.js");
 const { isLoggedIn } = require("../middleware.js");
-const multer = require("multer");
-const path = require("path");
-
-const upload = multer({ dest: path.join(__dirname, "../public/uploads/") });
+const { storage } = require("../cloudConfig.js");
+const upload = multer({ storage });
 
 const validateListing = (req, res, next) => {
   const { error } = listingSchema.validate(req.body);
@@ -92,13 +90,14 @@ router.post(
 
     const newListing = new Listing(listingData);
 
-    // Handle image upload (file or URL)
+    newListing.owner = req.user._id;
+
     if (req.file) {
-      newListing.image = { url: "/uploads/" + req.file.filename, filename: req.file.filename };
+      let url = req.file.path;
+      let filename = req.file.filename;
+      newListing.image = { url, filename };
     } else if (listingData.image && listingData.image.url) {
       newListing.image = { url: listingData.image.url, filename: "listingimage" };
-    } else if (typeof listingData.image === 'string' && listingData.image.trim() !== '') {
-      newListing.image = { url: listingData.image, filename: "listingimage" };
     }
 
     newListing.owner = req.user._id;
@@ -143,7 +142,9 @@ router.put(
 
     // Handle image update (file or URL)
     if (req.file) {
-      listing.image = { url: "/uploads/" + req.file.filename, filename: req.file.filename };
+      let url = req.file.path;
+      let filename = req.file.filename;
+      listing.image = { url, filename };
       await listing.save();
     } else if (image && typeof image === 'string' && image.trim() !== '') {
       listing.image = { url: image, filename: "listingimage" };
