@@ -182,7 +182,9 @@ router.post(
       listingData.amenities = [];
     }
 
-    const newListing = new Listing(listingData);
+    // Extract image from listingData to handle it separately
+    const { image, ...otherData } = listingData;
+    const newListing = new Listing(otherData);
 
     newListing.owner = req.user._id;
 
@@ -190,11 +192,10 @@ router.post(
       let url = req.file.path;
       let filename = req.file.filename;
       newListing.image = { url, filename };
-    } else if (listingData.image && listingData.image.url) {
-      newListing.image = { url: listingData.image.url, filename: "listingimage" };
+    } else if (image && typeof image === 'string' && image.trim() !== '') {
+      newListing.image = { url: image, filename: "listingimage" };
     }
 
-    newListing.owner = req.user._id;
     await newListing.save();
     req.flash("success", "Successfully added your listing!");
     res.redirect("/listings");
