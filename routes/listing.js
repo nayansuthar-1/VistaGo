@@ -51,8 +51,8 @@ async function sendBookingConfirmationEmail(email, booking, listing) {
                                 <td style="color: #717171; font-size: 12px; text-transform: uppercase;">Check-out</td>
                             </tr>
                             <tr>
-                                <td style="font-weight: bold; font-size: 16px;">${new Date(booking.checkIn).toLocaleDateString()}</td>
-                                <td style="font-weight: bold; font-size: 16px;">${new Date(booking.checkOut).toLocaleDateString()}</td>
+                                <td style="font-weight: bold; font-size: 16px;">${new Date(booking.checkIn).toLocaleDateString('en-IN')}</td>
+                                <td style="font-weight: bold; font-size: 16px;">${new Date(booking.checkOut).toLocaleDateString('en-IN')}</td>
                             </tr>
                             <tr style="height: 20px;"><td></td><td></td></tr>
                             <tr>
