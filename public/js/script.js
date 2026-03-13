@@ -405,6 +405,13 @@
 
         priceSummary.classList.remove("d-none");
         pricePlaceholder.classList.add("d-none");
+        
+        // Enable desktop reserve button
+        const reserveBtn = document.getElementById("reserve-btn");
+        if (reserveBtn) {
+          reserveBtn.disabled = false;
+          reserveBtn.style.opacity = "1";
+        }
       }
 
       // --- Mobile Specific Booking Logic ---
@@ -443,8 +450,10 @@
 
         function updatePriceDetailsMobile(nights, price) {
           if (!priceSummaryMobile) return;
+          
           const basePrice = price * nights;
-          const totalPrice = basePrice; // Simplified for mobile summary if needed, or mirror desktop
+          const serviceFee = Math.round(basePrice * 0.14);
+          const totalPrice = basePrice + serviceFee;
 
           if (document.getElementById("night-calc-label-mobile")) document.getElementById("night-calc-label-mobile").innerText = `₹ ${price.toLocaleString()} x ${nights} nights`;
           if (document.getElementById("base-price-total-mobile")) document.getElementById("base-price-total-mobile").innerText = `₹ ${basePrice.toLocaleString()}`;
@@ -454,6 +463,13 @@
           if (document.getElementById("total-nights-mobile")) document.getElementById("total-nights-mobile").value = nights;
 
           priceSummaryMobile.classList.remove("d-none");
+          
+          // Enable mobile reserve button
+          const mobileReserveBtn = document.querySelector("#booking-form-mobile button[type='submit']");
+          if (mobileReserveBtn) {
+            mobileReserveBtn.disabled = false;
+            mobileReserveBtn.style.opacity = "1";
+          }
         }
       }
     }

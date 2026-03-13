@@ -10,6 +10,13 @@ const User = require("../models/user.js");
 const { isLoggedIn } = require("../middleware.js");
 const { storage } = require("../cloudConfig.js");
 const upload = multer({ storage });
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 const validateListing = (req, res, next) => {
   const { error } = listingSchema.validate(req.body);
@@ -224,17 +231,62 @@ router.post("/:id/reserve", isLoggedIn, wrapAsync(async (req, res) => {
     let booking = new Booking(req.body.booking);
     booking.listing = id;
     booking.user = req.user._id;
+    booking.status = "pending";
+    booking.paymentStatus = "unpaid";
 
-    // Simulate Payment Flow for Razorpay Approval (if no Keys provided)
-    // In real scenario, we would create Razorpay Order here
-    booking.status = "confirmed";
-    booking.paymentStatus = "paid";
-    booking.razorpayOrderId = "mock_ord_" + Math.random().toString(36).substr(2, 9);
-    
-    await booking.save();
-    
-    req.flash("success", "Booking confirmed! Your payment was successful.");
-    res.redirect(`/listings/bookings/${booking._id}/success`);
+    // Create Razorpay Order
+    const amountInPaise = Math.round(parseFloat(totalPrice) * 100);
+
+    if (amountInPaise < 100) { // Razorpay minimum is 1 INR (100 paise)
+      return res.status(400).json({ success: false, message: "Invalid booking amount. Please select dates." });
+    }
+
+    const options = {
+      amount: amountInPaise,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    };
+
+    try {
+      const order = await razorpay.orders.create(options);
+      booking.razorpayOrderId = order.id;
+      await booking.save();
+
+      res.status(200).json({
+        success: true,
+        order,
+        bookingId: booking._id,
+        key_id: process.env.RAZORPAY_KEY_ID,
+        user: {
+          name: req.user.username,
+          email: req.user.email,
+        }
+      });
+    } catch (err) {
+      console.error("Razorpay Order Error:", err);
+      res.status(500).json({ success: false, message: "Order creation failed" });
+    }
+}));
+
+// Verify Payment Route
+router.post("/verify-payment", isLoggedIn, wrapAsync(async (req, res) => {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, bookingId } = req.body;
+
+    const shasum = crypto.createHmac("sha256", process.env.RAZORPAY_KEY_SECRET);
+    shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
+    const digest = shasum.digest("hex");
+
+    if (digest === razorpay_signature) {
+        // Payment is legit
+        await Booking.findByIdAndUpdate(bookingId, {
+            status: "confirmed",
+            paymentStatus: "paid",
+            razorpayPaymentId: razorpay_payment_id
+        });
+        res.json({ success: true });
+    } else {
+        res.status(400).json({ success: false, message: "Invalid signature" });
+    }
 }));
 
 // Cancellation Route

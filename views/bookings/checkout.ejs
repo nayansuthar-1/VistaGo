@@ -67,72 +67,83 @@
                 </div>
             </div>
             
-            <!-- Razorpay Simulation Modal -->
-            <div id="razorpay-mock-modal" class="position-fixed top-0 start-0 w-100 h-100 d-none align-items-center justify-content-center" style="background: rgba(0,0,0,0.6); z-index: 9999;">
-                <div class="card bg-white border-0 rounded-4 shadow-lg overflow-hidden" style="width: 400px;">
-                    <div class="p-4 bg-light border-bottom d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-2">
-                             <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;">
-                                <i class="fa-solid fa-bolt text-white small"></i>
-                             </div>
-                             <span class="fw-bold">Razorpay Checkout</span>
-                        </div>
-                        <button type="button" class="btn-close small" id="close-mock-modal"></button>
-                    </div>
-                    <div class="p-4 text-center">
-                        <h4 class="fw-bold mb-3">&#8377; <%= booking.totalPrice.toLocaleString() %></h4>
-                        <p class="text-muted small mb-4">Payment for <strong><%= listing.title %></strong></p>
-                        
-                        <div class="payment-methods text-start mb-4">
-                            <label class="small fw-bold text-muted mb-2 d-block">CHOOSE PAYMENT METHOD</label>
-                            <div class="list-group list-group-flush border rounded-3 overflow-hidden">
-                                <div class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 pointer-cursor">
-                                    <i class="fa-solid fa-credit-card text-muted"></i>
-                                    <div>
-                                        <div class="fw-bold small">Card</div>
-                                        <div class="text-muted" style="font-size: 0.7rem;">Visa, Mastercard, RuPay & More</div>
-                                    </div>
-                                </div>
-                                <div class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3 pointer-cursor bg-light">
-                                    <i class="fa-solid fa-mobile-screen-button text-primary"></i>
-                                    <div>
-                                        <div class="fw-bold small">UPI (Recommended)</div>
-                                        <div class="text-muted" style="font-size: 0.7rem;">Google Pay, PhonePe, Paytm</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button id="simulate-success" class="btn btn-primary w-100 py-2 fw-bold mb-2">Simulate Successful Payment</button>
-                        <p class="text-center text-muted" style="font-size: 0.65rem;">This is a simulation for Razorpay approval purposes.</p>
-                    </div>
-                </div>
-            </div>
 
             <script>
                 const checkoutForm = document.getElementById("checkout-form");
-                const mockModal = document.getElementById("razorpay-mock-modal");
-                const simulateBtn = document.getElementById("simulate-success");
-                const closeBtn = document.getElementById("close-mock-modal");
+                const mainPayBtn = document.getElementById("main-pay-btn");
 
-                checkoutForm.addEventListener("submit", (e) => {
+                checkoutForm.addEventListener("submit", async (e) => {
                     e.preventDefault();
-                    mockModal.classList.remove("d-none");
-                    mockModal.classList.add("d-flex");
-                });
+                    mainPayBtn.disabled = true;
+                    mainPayBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Initializing...';
 
-                closeBtn.addEventListener("click", () => {
-                    mockModal.classList.add("d-none");
-                    mockModal.classList.remove("d-flex");
-                });
+                    const formData = new FormData(checkoutForm);
+                    const bookingData = {};
+                    formData.forEach((value, key) => {
+                        // Handle nested booking[field] syntax
+                        const match = key.match(/booking\[(\w+)\]/);
+                        if (match) {
+                            bookingData[match[1]] = value;
+                        }
+                    });
 
-                simulateBtn.addEventListener("click", () => {
-                    simulateBtn.disabled = true;
-                    simulateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Processing...';
-                    
-                    setTimeout(() => {
-                        checkoutForm.submit();
-                    }, 1500);
+                    try {
+                        const response = await fetch(checkoutForm.action, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ booking: bookingData })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            const options = {
+                                key: data.key_id,
+                                amount: data.order.amount,
+                                currency: data.order.currency,
+                                name: "VistaGo",
+                                description: "Luxury Stay Booking",
+                                order_id: data.order.id,
+                                handler: async function (response) {
+                                    // Handle payment success
+                                    const verifyRes = await fetch("/listings/verify-payment", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({
+                                            razorpay_order_id: response.razorpay_order_id,
+                                            razorpay_payment_id: response.razorpay_payment_id,
+                                            razorpay_signature: response.razorpay_signature,
+                                            bookingId: data.bookingId
+                                        })
+                                    });
+
+                                    const verifyData = await verifyRes.json();
+                                    if (verifyData.success) {
+                                        window.location.href = `/listings/bookings/${data.bookingId}/success`;
+                                    } else {
+                                        alert("Payment verification failed. Please contact support.");
+                                        location.reload();
+                                    }
+                                },
+                                prefill: {
+                                    name: data.user.name,
+                                    email: data.user.email
+                                },
+                                theme: { color: "#FF385C" }
+                            };
+
+                            const rzp1 = new Razorpay(options);
+                            rzp1.open();
+                        } else {
+                            alert(data.message || "Failed to create order");
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert("An error occurred. Please try again.");
+                    } finally {
+                        mainPayBtn.disabled = false;
+                        mainPayBtn.innerHTML = 'Confirm and Pay';
+                    }
                 });
             </script>
 

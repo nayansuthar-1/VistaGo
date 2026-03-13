@@ -29,6 +29,17 @@ body {
   background-color: var(--brand-color) !important;
 }
 
+.btn-brand {
+  background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.btn-brand:hover {
+  background: linear-gradient(to right, #d70466 0%, #bd1e59 50%, #b10250 100%) !important;
+  color: white !important;
+}
+
 .hover-bg-light:hover {
   background-color: var(--bg-hover-light) !important;
   transition: background-color 0.2s ease;

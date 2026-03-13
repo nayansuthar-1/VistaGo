@@ -17,6 +17,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("./models/user.js");
+const Listing = require("./models/listing.js");
+
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
@@ -26,6 +28,7 @@ const userRouter = require("./routes/user.js");
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
@@ -80,6 +83,8 @@ app.listen(port, () => {
 app.get("/", async (req, res) => {
   res.redirect("/listings");
 });
+
+
 
 app.use(session(sessionOptions));
 app.use(flash());
@@ -155,15 +160,6 @@ app.get("/policy", (req, res) => {
   res.render("pages/policy.ejs");
 });
 
-// app.get("/demouser", async (req, res) => {
-//   let fakeUser = new User({
-//     email: "student@gmail.com",
-//     username: "fake-student",
-//   })
-
-//   let registeredUser = await User.register(fakeUser, "hellopassword");
-//   res.send(registeredUser);
-// })
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews/", reviewRouter);

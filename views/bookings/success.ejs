@@ -1,62 +1,261 @@
 <% layout("/layouts/boilerplate") -%>
 
-<div class="row mt-5 mb-5 px-3">
+<!-- Include html2pdf library for Share PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<div class="row mt-3 mt-md-5 mb-5 px-1 px-md-3">
     <div class="col-12 col-md-8 col-lg-6 offset-md-2 offset-lg-3 text-center">
-        <div class="card shadow-lg border-0 rounded-5 p-5">
-            <div class="mb-4">
-                <div class="success-checkmark d-inline-block bg-success text-white rounded-circle shadow-lg" style="width: 100px; height: 100px; line-height: 100px; font-size: 3rem;">
+        <div id="receipt-content" class="card shadow-lg border-0 rounded-5 p-3 p-md-5 receipt-card">
+            <div class="mb-3 mb-md-4">
+                <div class="success-checkmark d-inline-flex align-items-center justify-content-center bg-success text-white rounded-circle shadow-lg checkmark-circle">
                     <i class="fa-solid fa-check"></i>
                 </div>
             </div>
             
-            <h1 class="fw-bold mb-2">Booking Confirmed!</h1>
-            <p class="text-muted fs-5 mb-4">Your stay at <strong><%= listing.title %></strong> is successfully booked.</p>
+            <h2 class="fw-bold mb-2 mobile-title">Booking Confirmed!</h2>
+            <p class="text-muted fs-6 fs-md-5 mb-4 px-md-3">Your stay at <strong><%= listing.title %></strong> is successfully booked.</p>
             
-            <div class="card bg-light border-0 rounded-4 p-4 text-start mb-4">
+            <div class="card bg-light border-0 rounded-4 p-4 text-start mb-4 booking-details-box">
                 <div class="row gy-3">
                     <div class="col-6">
-                        <p class="small text-muted mb-1">Check-in</p>
-                        <p class="fw-bold mb-0"><%= new Date(booking.checkIn).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
+                        <p class="x-small text-muted mb-1 text-uppercase fw-bold">Check-in</p>
+                        <p class="fw-bold mb-0 small-mobile-text"><%= new Date(booking.checkIn).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
                     </div>
                     <div class="col-6">
-                        <p class="small text-muted mb-1">Check-out</p>
-                        <p class="fw-bold mb-0"><%= new Date(booking.checkOut).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
+                        <p class="x-small text-muted mb-1 text-uppercase fw-bold">Check-out</p>
+                        <p class="fw-bold mb-0 small-mobile-text"><%= new Date(booking.checkOut).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
                     </div>
                     <div class="col-6">
-                        <p class="small text-muted mb-1">Guests</p>
-                        <p class="fw-bold mb-0"><%= booking.guests %> guests</p>
+                        <p class="x-small text-muted mb-1 text-uppercase fw-bold">Guests</p>
+                        <p class="fw-bold mb-0 small-mobile-text"><%= booking.guests %> guests</p>
                     </div>
                     <div class="col-6">
-                        <p class="small text-muted mb-1">Total Paid</p>
-                        <p class="fw-bold mb-0">&#8377;<%= booking.totalPrice.toLocaleString() %></p>
+                        <p class="x-small text-muted mb-1 text-uppercase fw-bold">Total Paid</p>
+                        <p class="fw-bold mb-0 small-mobile-text">&#8377;<%= booking.totalPrice.toLocaleString() %></p>
                     </div>
                 </div>
             </div>
 
-            <div class="card border border-2 border-dashed rounded-4 p-3 mb-4">
-                <p class="small text-muted mb-1">Reservation ID</p>
-                <p class="fw-bold mb-0 text-uppercase letter-spacing-1"><%= booking._id %></p>
+            <div class="card border border-2 border-dashed rounded-4 p-3 mb-4 id-box">
+                <div class="mb-3">
+                    <p class="x-small text-muted mb-1 text-uppercase fw-bold">Reservation ID</p>
+                    <p class="fw-bold mb-0 text-uppercase letter-spacing-1 id-text"><%= booking._id %></p>
+                </div>
+                <% if(booking.razorpayPaymentId) { %>
+                <div class="border-top pt-3">
+                    <p class="x-small text-muted mb-1 text-uppercase fw-bold">Razorpay Payment ID</p>
+                    <p class="fw-bold mb-0 text-success letter-spacing-1 id-text text-break"><%= booking.razorpayPaymentId %></p>
+                </div>
+                <% } %>
             </div>
 
-            <p class="small text-muted mb-5">A confirmation email has been sent to your registered account. You can manage your booking in your dashboard.</p>
+            <div class="d-flex gap-2 mb-4 no-print">
+                <button onclick="window.print()" class="btn btn-outline-dark w-50 py-3 rounded-3 fw-bold">
+                    <i class="fa-solid fa-download me-2"></i> Download
+                </button>
+                <button id="share-receipt-btn" class="btn btn-brand py-3 rounded-3 fw-bold text-white shadow-sm w-50">
+                    <i class="fa-solid fa-share-nodes me-2"></i> Share
+                </button>
+            </div>
 
-            <div class="d-flex flex-column gap-3">
-                <a href="/account/bookings" class="btn btn-brand py-3 fw-bold text-white shadow-sm rounded-3">View My Trips</a>
-                <a href="/listings" class="btn btn-outline-dark py-3 fw-bold rounded-3">Explore More Stays</a>
+            <p class="small text-muted mb-4 no-print">A confirmation email has been sent to your account.</p>
+
+            <div class="d-flex flex-column gap-2 no-print">
+                <a href="/listings/<%= listing._id %>" class="btn btn-outline-dark py-3 fw-bold rounded-3">
+                    <i class="fa-solid fa-house-chimney me-2"></i> View Listing
+                </a>
+                <a href="/bookings" class="btn btn-outline-dark py-3 fw-bold rounded-3">View My Trips</a>
             </div>
         </div>
     </div>
 </div>
 
 <style>
+    .checkmark-circle {
+        width: 100px;
+        height: 100px;
+        font-size: 3rem;
+    }
     .success-checkmark {
         animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     .letter-spacing-1 {
         letter-spacing: 1px;
     }
+    .x-small {
+        font-size: 0.7rem;
+    }
+    .id-text {
+        word-break: break-all;
+        font-size: 1rem;
+    }
+    @media (max-width: 576px) {
+        .checkmark-circle {
+            width: 85px !important;
+            height: 85px !important;
+            font-size: 2.5rem !important;
+        }
+        .mobile-title { font-size: 1.8rem !important; }
+        .small-mobile-text { font-size: 1.05rem !important; }
+        .id-text { font-size: 0.9rem !important; }
+        .receipt-card { 
+            padding: 1.5rem 1rem !important;
+            border-radius: 0 !important;
+            margin-left: -0.75rem;
+            margin-right: -0.75rem;
+            width: calc(100% + 1.5rem) !important;
+        }
+    }
     @keyframes scaleIn {
         from { transform: scale(0); opacity: 0; }
         to { transform: scale(1); opacity: 1; }
     }
+    
+    /* Print Styles - this is the "perfect" output */
+    @media print {
+        body { 
+            -webkit-print-color-adjust: exact !important; 
+            print-color-adjust: exact !important;
+            background-color: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .no-print, .navbar, .footer { display: none !important; }
+        
+        .row { margin: 0 !important; padding: 0 !important; }
+        .col-12 { width: 100% !important; margin: 0 !important; }
+        
+        .receipt-card { 
+            box-shadow: none !important; 
+            border: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 20px !important;
+            border-radius: 0 !important;
+        }
+        
+        .booking-details-box {
+            background-color: #f8f9fa !important;
+            border-radius: 15px !important;
+            padding: 20px !important;
+        }
+        
+        .id-box {
+            border: 2px dashed #ddd !important;
+        }
+
+        .text-success { color: #198754 !important; }
+        .bg-success { background-color: #198754 !important; }
+        .bg-light { background-color: #f8f9fa !important; }
+
+        @page {
+            size: auto;
+            margin: 0;
+        }
+    }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const shareBtn = document.getElementById("share-receipt-btn");
+
+        if (shareBtn) {
+            shareBtn.addEventListener("click", async () => {
+                const originalBtnContent = shareBtn.innerHTML;
+                shareBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Generating PDF...';
+                shareBtn.disabled = true;
+
+                try {
+                    const original = document.getElementById("receipt-content");
+
+                    // 1. Inject temporary styles for capture
+                    // This forces the "Perfect" print layout but on the actual visible element
+                    const style = document.createElement('style');
+                    style.innerHTML = `
+                        .pdf-capture-mode .no-print, 
+                        .pdf-capture-mode .navbar, 
+                        .pdf-capture-mode .footer { display: none !important; }
+                        
+                        .pdf-capture-mode .receipt-card {
+                            box-shadow: none !important;
+                            border: 1px solid #eee !important;
+                            border-radius: 16px !important;
+                            width: 650px !important; /* Proper width for landscape centering */
+                            margin: 0 auto !important;
+                            padding: 40px !important;
+                            background: white !important;
+                        }
+
+                        /* Force colors for capture */
+                        .pdf-capture-mode .bg-light, 
+                        .pdf-capture-mode .booking-details-box { background-color: #f8f9fa !important; }
+                        .pdf-capture-mode .bg-success { background-color: #198754 !important; color: white !important; }
+                        .pdf-capture-mode .text-success { color: #198754 !important; }
+                        .pdf-capture-mode .text-muted { color: #717171 !important; }
+                        .pdf-capture-mode .id-box { border: 2px dashed #ddd !important; }
+                    `;
+                    document.head.appendChild(style);
+                    document.body.classList.add('pdf-capture-mode');
+
+                    // 2. Wait for styles to apply
+                    await new Promise(r => setTimeout(r, 300));
+
+                    // 3. Generate PDF - Single page, Landscape, Centered
+                    // We catch the element directly in its position
+                    const pdfBlob = await html2pdf()
+                        .set({
+                            margin: 0,
+                            filename: 'VistaGo_Receipt.pdf',
+                            image: { type: 'jpeg', quality: 1 },
+                            html2canvas: {
+                                scale: 2,
+                                useCORS: true,
+                                logging: false,
+                                backgroundColor: '#ffffff',
+                                scrollY: 0
+                            },
+                            jsPDF: { 
+                                unit: 'mm', 
+                                format: 'a4', 
+                                orientation: 'landscape' 
+                            }
+                        })
+                        .from(original)
+                        .output('blob');
+
+                    // 4. Cleanup Class and Styles
+                    document.body.classList.remove('pdf-capture-mode');
+                    document.head.removeChild(style);
+
+                    // 5. Share PDF ONLY (no text/title)
+                    const file = new File([pdfBlob], 'VistaGo_Receipt.pdf', { type: 'application/pdf' });
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        // Crucial: Only share the files object to prevent WhatsApp from adding text
+                        await navigator.share({
+                            files: [file]
+                        });
+                    } else {
+                        // Fallback: Download
+                        const url = URL.createObjectURL(pdfBlob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'VistaGo_Receipt.pdf';
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    }
+                } catch (err) {
+                    if (err.name !== "AbortError") {
+                        console.error("PDF Share Error:", err);
+                        window.print();
+                    }
+                } finally {
+                    shareBtn.innerHTML = originalBtnContent;
+                    shareBtn.disabled = false;
+                }
+            });
+        }
+    });
+</script>
+
