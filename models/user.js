@@ -17,7 +17,16 @@ const userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "Listing"
     }
-  ]
+  ],
+  googleId: String,
+  isGoogleUser: {
+    type: Boolean,
+    default: false
+  },
+  isDeactivated: {
+    type: Boolean,
+    default: false
+  }
 });
 
 

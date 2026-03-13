@@ -1,0 +1,100 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12 col-md-8 mx-auto">
+      <!-- Breadcrumbs -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/account" class="text-dark text-decoration-none fw-medium">Account</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Login & security</li>
+        </ol>
+      </nav>
+
+      <h1 class="fw-bold mb-5">Login & security</h1>
+
+      <div class="security-list mt-4">
+        <h4 class="fw-bold mb-4">Login</h4>
+        
+        <!-- Password Section -->
+        <div class="d-flex justify-content-between align-items-center py-4 border-bottom">
+          <div class="flex-grow-1">
+            <h6 class="fw-bold mb-1">Password</h6>
+            <p class="text-muted mb-0">Update your account security</p>
+          </div>
+          <button class="btn text-dark text-decoration-underline fw-bold btn-link p-0 hover-underline" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Update</button>
+        </div>
+
+        <!-- Logout Section -->
+        <div class="d-flex justify-content-between align-items-center py-4 border-bottom">
+          <div class="flex-grow-1">
+            <h6 class="fw-bold mb-1">Logout</h6>
+            <p class="text-muted mb-0">Sign out of your account</p>
+          </div>
+          <a href="/logout" class="btn text-dark text-decoration-underline fw-bold btn-link p-0 hover-underline">Log out</a>
+        </div>
+
+        <!-- Account Section -->
+        <div class="py-5">
+          <h4 class="fw-bold mb-4">Account</h4>
+          <div class="d-flex justify-content-between align-items-center py-4">
+            <div class="flex-grow-1 pe-3">
+              <h6 class="fw-bold mb-1">Deactivate your account</h6>
+              <p class="text-muted mb-0">This will hide your profile, listings, and reviews until you log back in</p>
+            </div>
+            <button class="btn btn-outline-danger fw-bold rounded-3 px-4 py-2" data-bs-toggle="modal" data-bs-target="#deactivateModal">Deactivate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-bottom-0 pb-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 pt-0">
+        <h4 class="fw-bold mb-4" id="changePasswordModalLabel">Update Password</h4>
+        <form action="/account/change-password" method="POST" class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label for="oldPassword" class="form-label text-muted small fw-bold text-uppercase">Current Password</label>
+            <input type="password" name="oldPassword" id="oldPassword" class="form-control rounded-3 py-2 px-3" required>
+          </div>
+          <div class="mb-4">
+            <label for="newPassword" class="form-label text-muted small fw-bold text-uppercase">New Password</label>
+            <input type="password" name="newPassword" id="newPassword" class="form-control rounded-3 py-2 px-3" required>
+          </div>
+          <button type="submit" class="btn btn-dark w-100 py-3 rounded-3 fw-bold">Update Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Deactivate Modal -->
+<div class="modal fade" id="deactivateModal" tabindex="-1" aria-labelledby="deactivateModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-bottom-0 pb-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 pt-0">
+        <h4 class="fw-bold mb-3" id="deactivateModalLabel">Deactivate your account?</h4>
+        <p class="text-muted mb-4">Deactivating your account will hide your profile, listings, and reviews across VistaGo. You can reactivate everything at any time by simply logging back in.</p>
+        <form action="/account/deactivate" method="POST">
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-light flex-grow-1 py-3 rounded-3 fw-bold" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger flex-grow-1 py-3 rounded-3 fw-bold">Deactivate Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>

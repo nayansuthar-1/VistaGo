@@ -570,3 +570,64 @@ body {
 #guest-dropdown-toggle:hover {
   background-color: #f7f7f7 !important;
 }
+
+/* Map Section Styles */
+.map-toggle-container {
+  background-color: #f7f7f7;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  border: 1px solid var(--border-light);
+}
+
+#map-container {
+  transition: box-shadow 0.3s ease;
+}
+
+#map-container:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.form-check-input:checked {
+  background-color: var(--brand-color);
+  border-color: var(--brand-color);
+}
+
+.pointer-cursor {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  #map-container {
+    height: 350px !important;
+  }
+}
+
+/* Account Page Styles */
+.account-card {
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1) !important;
+  cursor: pointer;
+  border: 1px solid var(--border-light) !important;
+}
+
+.account-card:hover {
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08) !important;
+  transform: translateY(-4px);
+  border-color: var(--border-hover) !important;
+}
+
+.account-card i {
+  color: var(--brand-color);
+  transition: transform 0.3s ease;
+}
+
+.account-card:hover i {
+  transform: scale(1.1);
+}
+
+.my-listings-dashboard .card {
+  transition: box-shadow 0.3s ease;
+}
+
+.my-listings-dashboard .card:hover {
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+}

@@ -1,0 +1,45 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="container py-5">
+  <div class="d-flex align-items-center gap-3 mb-4">
+    <a href="/account" class="btn btn-light rounded-circle border p-0 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+      <i class="fa-solid fa-chevron-left"></i>
+    </a>
+    <h1 class="fw-bold m-0">Your Listings</h1>
+  </div>
+
+  <% if (allListings && allListings.length > 0) { %>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+      <% for (let listing of allListings) { %>
+        <div class="col">
+          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative group">
+            <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 200px; object-fit: cover;">
+            <div class="card-body p-3">
+              <h6 class="fw-bold mb-1 text-truncate"><%= listing.title %></h6>
+              <p class="text-muted small mb-3"><%= listing.location %>, <%= listing.country %></p>
+              
+              <div class="d-flex gap-2">
+                <a href="/listings/<%= listing._id %>/edit" class="btn btn-sm btn-outline-dark flex-grow-1 rounded-3">Edit</a>
+                <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="flex-grow-1">
+                  <button class="btn btn-sm btn-outline-danger w-100 rounded-3">Delete</button>
+                </form>
+              </div>
+            </div>
+            <a href="/listings/<%= listing._id %>" class="stretched-link" style="z-index: 1; height: calc(100% - 60px);"></a>
+            <!-- Buttons are at z-index 2 -->
+            <style>
+              .btn, form { position: relative; z-index: 2; }
+            </style>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="text-center py-5 bg-light rounded-4 border">
+        <i class="fa-solid fa-house-circle-exclamation fs-1 text-muted mb-3"></i>
+        <h3>No listings yet</h3>
+        <p class="text-muted">You haven't added any listings to VistaGo. Start hosting today!</p>
+        <a href="/listings/new" class="btn btn-brand text-white fw-bold px-4 py-2 mt-2">Create new listing</a>
+    </div>
+  <% } %>
+</div>

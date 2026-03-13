@@ -25,18 +25,18 @@ const validateListing = (req, res, next) => {
 // index route
 router.get("/", async (req, res) => {
   let allListings;
+  let query = { isDeactivated: { $ne: true } };
+
   if (req.query.location) {
     const regex = new RegExp(req.query.location, 'i'); // Case-insensitive search
-    allListings = await Listing.find({ 
-      $or: [
-        { location: regex },
-        { country: regex },
-        { title: regex }
-      ]
-    });
-  } else {
-    allListings = await Listing.find({});
+    query.$or = [
+      { location: regex },
+      { country: regex },
+      { title: regex }
+    ];
   }
+
+  allListings = await Listing.find(query);
   res.render("listings/index.ejs", { allListings });
 });
 
@@ -52,14 +52,15 @@ router.get("/:id",  async (req, res) => {
   const listing = await Listing.findById(id)
     .populate({
       path: "reviews",
+      match: { isDeactivated: { $ne: true } }, // Filter deactivated reviews
       populate: {
         path: "author"
       }
     })
     .populate("owner");
   
-  if (!listing) {
-    req.flash("error", "Listing doesn't exist");
+  if (!listing || listing.isDeactivated === true) {
+    req.flash("error", "Listing doesn't exist or has been hidden");
     return res.redirect("/listings");
   }
 

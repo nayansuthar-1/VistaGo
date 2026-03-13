@@ -50,7 +50,11 @@ const listingSchema = new Schema({
     {
       type: String,
     }
-  ]
+  ],
+  isDeactivated: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const Listing = mongoose.model("Listing", listingSchema);

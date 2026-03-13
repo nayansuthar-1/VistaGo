@@ -1,0 +1,87 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12 mb-4">
+      <h1 class="fw-bold">Account</h1>
+      <div class="d-flex align-items-center gap-2">
+        <span class="fs-5 fw-medium"><%= currUser.username %>,</span>
+        <span class="text-muted"><%= currUser.email %></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-2">
+    <!-- Personal Info Card -->
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm account-card p-3 rounded-4">
+        <div class="card-body d-flex flex-column">
+          <i class="fa-regular fa-id-card fs-2 mb-3 text-brand"></i>
+          <h5 class="card-title fw-bold">Personal info</h5>
+          <p class="card-text text-muted small flex-grow-1">Provide personal details and how we can reach you</p>
+          <a href="/account/personal-info" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Bookings Card -->
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm account-card p-3 rounded-4">
+        <div class="card-body d-flex flex-column">
+          <i class="fa-solid fa-suitcase fs-2 mb-3 text-brand"></i>
+          <h5 class="card-title fw-bold">My Trips</h5>
+          <p class="card-text text-muted small flex-grow-1">View your booking history and upcoming stays</p>
+          <a href="/bookings" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wishlist Card -->
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm account-card p-3 rounded-4">
+        <div class="card-body d-flex flex-column">
+          <i class="fa-regular fa-heart fs-2 mb-3 text-brand"></i>
+          <h5 class="card-title fw-bold">Wishlists</h5>
+          <p class="card-text text-muted small flex-grow-1">View your saved listings for future trips</p>
+          <a href="/wishlist" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Listings Card -->
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm account-card p-3 rounded-4">
+        <div class="card-body d-flex flex-column">
+          <i class="fa-solid fa-house-chimney fs-2 mb-3 text-brand"></i>
+          <h5 class="card-title fw-bold">Manage Listings</h5>
+          <p class="card-text text-muted small flex-grow-1">View, edit, or delete the properties you've listed</p>
+          <a href="/account/listings" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Card -->
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm account-card p-3 rounded-4">
+        <div class="card-body d-flex flex-column">
+          <i class="fa-solid fa-shield-halved fs-2 mb-3 text-brand"></i>
+          <h5 class="card-title fw-bold">Login & security</h5>
+          <p class="card-text text-muted small flex-grow-1">Update your password and secure your account</p>
+          <a href="/account/security" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payments Card -->
+    <div class="col">
+      <div class="card h-100 border-0 shadow-sm account-card p-3 rounded-4">
+        <div class="card-body d-flex flex-column">
+          <i class="fa-solid fa-credit-card fs-2 mb-3 text-brand"></i>
+          <h5 class="card-title fw-bold">Payments & payouts</h5>
+          <p class="card-text text-muted small flex-grow-1">Review payments, payouts, coupons, and gift cards</p>
+          <a href="#" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

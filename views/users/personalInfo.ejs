@@ -1,0 +1,81 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12 col-md-8 mx-auto">
+      <!-- Breadcrumbs -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/account" class="text-dark text-decoration-none fw-medium">Account</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Personal info</li>
+        </ol>
+      </nav>
+
+      <h1 class="fw-bold mb-5">Personal info</h1>
+
+      <div class="personal-info-list mt-4">
+        <!-- Legal Name Section -->
+        <div class="d-flex justify-content-between align-items-center py-4 border-bottom">
+          <div class="flex-grow-1 text-truncate pe-3">
+            <h6 class="fw-bold mb-1">Legal name</h6>
+            <p class="text-muted mb-0"><%= currUser.username %></p>
+          </div>
+          <button class="btn text-dark text-decoration-underline fw-bold btn-link p-0 hover-underline" data-bs-toggle="modal" data-bs-target="#editNameModal">Edit</button>
+        </div>
+
+        <!-- Email Address Section -->
+        <div class="d-flex justify-content-between align-items-center py-4 border-bottom">
+          <div class="flex-grow-1 text-truncate pe-3">
+            <h6 class="fw-bold mb-1">Email address</h6>
+            <p class="text-muted mb-0"><%= currUser.email %></p>
+          </div>
+          <div class="text-muted small">Not editable</div>
+        </div>
+
+        <!-- Phone Number Section -->
+        <div class="d-flex justify-content-between align-items-center py-4 border-bottom">
+          <div class="flex-grow-1">
+            <h6 class="fw-bold mb-1">Phone number</h6>
+            <p class="text-muted mb-0">Not provided</p>
+          </div>
+          <button class="btn text-dark text-decoration-underline fw-bold btn-link p-0 hover-underline" onclick="alert('Phone management coming soon!')">Add</button>
+        </div>
+
+        <!-- Government ID Section -->
+        <div class="d-flex justify-content-between align-items-center py-4 border-bottom">
+          <div class="flex-grow-1">
+            <h6 class="fw-bold mb-1">Government ID</h6>
+            <p class="text-muted mb-0">Not provided</p>
+          </div>
+          <button class="btn text-dark text-decoration-underline fw-bold btn-link p-0 hover-underline" onclick="alert('ID verification coming soon!')">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Name Modal -->
+<div class="modal fade" id="editNameModal" tabindex="-1" aria-labelledby="editNameModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow">
+      <div class="modal-header border-bottom-0 pb-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 pt-0">
+        <h4 class="fw-bold mb-4" id="editNameModalLabel">Edit Legal Name</h4>
+        <form action="/account/personal-info?_method=PUT" method="POST" class="needs-validation" novalidate>
+          <div class="mb-4">
+            <label for="username" class="form-label text-muted small fw-bold text-uppercase">Legal Name</label>
+            <input type="text" name="user[username]" id="username" class="form-control rounded-3 py-2 px-3" value="<%= currUser.username %>" required>
+            <div class="invalid-feedback">Please enter a name.</div>
+            <p class="text-muted mt-2 mb-0" style="font-size: 0.8rem;">This is the name on your travel document, which could be a license or a passport.</p>
+          </div>
+          <button type="submit" class="btn btn-dark w-100 py-3 rounded-3 fw-bold">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+  </div>
+</div>

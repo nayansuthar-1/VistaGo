@@ -327,14 +327,45 @@
     
     <!-- Map Section -->
     <div class="col-12 mt-5 mb-5 px-3 px-md-0">
-      <h4 class="fw-bold mb-4">Where you'll be</h4>
-      <div id="map" class="rounded-4 overflow-hidden border" style="height: 480px; background-color: #f7f7f7; display: flex; align-items: center; justify-content: center;">
-         <div class="text-center p-4">
-            <i class="fa-solid fa-map-location-dot fs-1 text-muted mb-3"></i>
-            <h5 class="text-muted">Map view coming soon</h5>
-            <p class="text-muted small">Location details for <%= listing.location %>, <%= listing.country %> available after booking.</p>
-         </div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold m-0">Where you'll be</h4>
+        <div class="map-toggle-container d-flex align-items-center gap-2">
+           <span class="small fw-medium text-muted">Standard</span>
+           <div class="form-check form-switch p-0 m-0 d-flex align-items-center">
+             <input class="form-check-input ms-0 pointer-cursor" type="checkbox" role="switch" id="mapTypeToggle" style="width: 2.5rem; height: 1.25rem;">
+           </div>
+           <span class="small fw-medium text-muted">Satellite</span>
+        </div>
       </div>
+      
+      <div id="map-container" class="rounded-4 overflow-hidden border position-relative" style="height: 480px; background-color: #f7f7f7;">
+         <iframe
+           id="googleMap"
+           width="100%"
+           height="100%"
+           style="border:0;"
+           loading="lazy"
+           allowfullscreen
+           src="https://maps.google.com/maps?q=<%= encodeURIComponent(listing.location + ', ' + listing.country) %>&t=&z=13&ie=UTF8&iwloc=&output=embed">
+         </iframe>
+      </div>
+      
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const mapToggle = document.getElementById("mapTypeToggle");
+          const mapIframe = document.getElementById("googleMap");
+          const location = "<%= listing.location %>, <%= listing.country %>";
+          const encodedLocation = encodeURIComponent(location);
+          
+          if (mapToggle && mapIframe) {
+            mapToggle.addEventListener("change", () => {
+              // t=m is standard, t=k is satellite
+              const mapType = mapToggle.checked ? "k" : "";
+              mapIframe.src = `https://maps.google.com/maps?q=${encodedLocation}&t=${mapType}&z=13&ie=UTF8&iwloc=&output=embed`;
+            });
+          }
+        });
+      </script>
     </div>
     </div> <!-- End listing-content-overlap -->
   </div> <!-- End col-12 col-md-10 -->

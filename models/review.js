@@ -15,6 +15,10 @@ const reviewSchema = new Schema({
     author: {
         type: Schema.Types.ObjectId,
         ref: "User"
+    },
+    isDeactivated: {
+        type: Boolean,
+        default: false
     }
 });
 
