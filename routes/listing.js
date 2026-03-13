@@ -12,6 +12,81 @@ const { storage } = require("../cloudConfig.js");
 const upload = multer({ storage });
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+
+// --- Helper Functions ---
+async function sendBookingConfirmationEmail(email, booking, listing) {
+    // Check for credentials
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.warn("Skipping email receipt: EMAIL_USER or EMAIL_PASS not configured in .env");
+        return;
+    }
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail', // Default to gmail, can be made configurable
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+
+    const mailOptions = {
+        from: `"VistaGo" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: `Booking Confirmed: ${listing.title}`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
+                <div style="background-color: #FF385C; color: white; padding: 20px; text-align: center;">
+                    <h1 style="margin: 0;">VistaGo</h1>
+                    <p style="margin: 5px 0 0;">Your booking is confirmed!</p>
+                </div>
+                <div style="padding: 30px;">
+                    <p>Hi,</p>
+                    <p>Great news! Your stay at <strong>${listing.title}</strong> is officially booked. Here are your trip details:</p>
+                    
+                    <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                        <table style="width: 100%;">
+                            <tr>
+                                <td style="color: #717171; font-size: 12px; text-transform: uppercase;">Check-in</td>
+                                <td style="color: #717171; font-size: 12px; text-transform: uppercase;">Check-out</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; font-size: 16px;">${new Date(booking.checkIn).toLocaleDateString()}</td>
+                                <td style="font-weight: bold; font-size: 16px;">${new Date(booking.checkOut).toLocaleDateString()}</td>
+                            </tr>
+                            <tr style="height: 20px;"><td></td><td></td></tr>
+                            <tr>
+                                <td style="color: #717171; font-size: 12px; text-transform: uppercase;">Guests</td>
+                                <td style="color: #717171; font-size: 12px; text-transform: uppercase;">Total Paid</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold; font-size: 16px;">${booking.guests} Guests</td>
+                                <td style="font-weight: bold; font-size: 16px;">₹${booking.totalPrice.toLocaleString()}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <p style="font-size: 12px; color: #717171;">Reservation ID: ${booking._id}</p>
+                    ${booking.razorpayPaymentId ? `<p style="font-size: 12px; color: #717171;">Payment ID: ${booking.razorpayPaymentId}</p>` : ''}
+                    
+                    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                    
+                    <p style="text-align: center; color: #717171; font-size: 14px;">Happy Travels!<br>The VistaGo Team</p>
+                </div>
+                <div style="background-color: #f8f9fa; padding: 15px; text-align: center; font-size: 12px; color: #717171;">
+                    &copy; ${new Date().getFullYear()} VistaGo. All rights reserved.
+                </div>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`Receipt email sent to: ${email}`);
+    } catch (error) {
+        console.error("Failed to send receipt email:", error);
+    }
+}
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -278,11 +353,17 @@ router.post("/verify-payment", isLoggedIn, wrapAsync(async (req, res) => {
 
     if (digest === razorpay_signature) {
         // Payment is legit
-        await Booking.findByIdAndUpdate(bookingId, {
+        const booking = await Booking.findByIdAndUpdate(bookingId, {
             status: "confirmed",
             paymentStatus: "paid",
             razorpayPaymentId: razorpay_payment_id
-        });
+        }, { new: true }).populate("listing");
+
+        // Send Email Receipt
+        if (req.body.receiptEmail) {
+            sendBookingConfirmationEmail(req.body.receiptEmail, booking, booking.listing);
+        }
+
         res.json({ success: true });
     } else {
         res.status(400).json({ success: false, message: "Invalid signature" });
