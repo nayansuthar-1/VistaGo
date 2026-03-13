@@ -71,7 +71,17 @@ router.get("/:id",  async (req, res) => {
     to: b.checkOut
   }));
 
-  res.render("listings/show.ejs", { listing, bookedDates });
+  // Find if current user has an active booking for this listing
+  let userBooking = null;
+  if (req.user) {
+    userBooking = await Booking.findOne({ 
+      listing: id, 
+      user: req.user._id,
+      status: { $in: ['pending', 'confirmed'] } 
+    });
+  }
+
+  res.render("listings/show.ejs", { listing, bookedDates, userBooking });
 });
 
 //create route
@@ -167,12 +177,35 @@ router.delete("/:id", isLoggedIn, async (req, res) => {
   res.redirect("/listings");
 });
 
-// Booking route
-router.post("/:id/bookings", isLoggedIn, wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let { checkIn, checkOut } = req.body.booking;
+// Success Page Route
+router.get("/bookings/:bookingId/success", isLoggedIn, wrapAsync(async (req, res) => {
+    let { bookingId } = req.params;
+    const booking = await Booking.findById(bookingId).populate("listing");
+    if (!booking) {
+        req.flash("error", "Booking not found");
+        return res.redirect("/listings");
+    }
+    res.render("bookings/success.ejs", { booking, listing: booking.listing });
+}));
 
-    // Availability Check
+// Checkout Route (Review Page)
+router.post("/:id/checkout-review", isLoggedIn, wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    let listing = await Listing.findById(id);
+    if (!listing) {
+        req.flash("error", "Listing not found");
+        return res.redirect("/listings");
+    }
+    let booking = req.body.booking;
+    res.render("bookings/checkout.ejs", { listing, booking });
+}));
+
+// Final Booking/Payment route
+router.post("/:id/reserve", isLoggedIn, wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    let { checkIn, checkOut, nights, guests, totalPrice } = req.body.booking;
+
+    // Availability Check (Double check)
     const overlappingBooking = await Booking.findOne({
         listing: id,
         $or: [
@@ -184,24 +217,67 @@ router.post("/:id/bookings", isLoggedIn, wrapAsync(async (req, res) => {
     });
 
     if (overlappingBooking) {
-        req.flash("error", "These dates are already booked! Please select different dates.");
+        req.flash("error", "These dates were just taken! Please select different dates.");
         return res.redirect(`/listings/${id}`);
     }
 
-    let listing = await Listing.findById(id);
-    if (!listing) {
-        req.flash("error", "Listing not found");
-        return res.redirect("/listings");
+    let booking = new Booking(req.body.booking);
+    booking.listing = id;
+    booking.user = req.user._id;
+
+    // Simulate Payment Flow for Razorpay Approval (if no Keys provided)
+    // In real scenario, we would create Razorpay Order here
+    booking.status = "confirmed";
+    booking.paymentStatus = "paid";
+    booking.razorpayOrderId = "mock_ord_" + Math.random().toString(36).substr(2, 9);
+    
+    await booking.save();
+    
+    req.flash("success", "Booking confirmed! Your payment was successful.");
+    res.redirect(`/listings/bookings/${booking._id}/success`);
+}));
+
+// Cancellation Route
+router.delete("/bookings/:bookingId/cancel", isLoggedIn, wrapAsync(async (req, res) => {
+    let { bookingId } = req.params;
+    const booking = await Booking.findById(bookingId);
+    
+    if (!booking) {
+        req.flash("error", "Booking not found");
+        return res.redirect("/bookings");
     }
 
-    let newBooking = new Booking(req.body.booking);
-    newBooking.listing = id;
-    newBooking.user = req.user._id;
+    // Security check: ensure the booking belongs to the current user
+    if (!booking.user.equals(req.user._id)) {
+        req.flash("error", "You don't have permission to cancel this booking");
+        return res.redirect("/bookings");
+    }
 
-    await newBooking.save();
-    
-    req.flash("success", "Booking confirmed! Enjoy your stay.");
-    res.redirect(`/listings/${id}`);
+    // Refund Policy Logic
+    const bookingTime = new Date(booking.createdAt).getTime();
+    const currentTime = Date.now();
+    const timeDiffMinutes = (currentTime - bookingTime) / (1000 * 60);
+
+    let refundAmount = 0;
+    let refundMessage = "No refund is applicable as per the 30-minute policy.";
+
+    if (timeDiffMinutes <= 30 && booking.totalPrice > 500) {
+        refundAmount = Math.round(booking.totalPrice * 0.5);
+        refundMessage = `Booking cancelled. A 50% refund (₹${refundAmount.toLocaleString()}) has been initiated.`;
+        booking.paymentStatus = "refund_pending";
+    } else if (timeDiffMinutes <= 30 && booking.totalPrice <= 500) {
+        refundMessage = "Booking cancelled. No refund applicable for bookings below ₹500.";
+        booking.paymentStatus = "paid"; // No refund
+    } else {
+        booking.paymentStatus = "paid"; // No refund
+    }
+
+    booking.status = "cancelled";
+    booking.refundAmount = refundAmount;
+    await booking.save();
+
+    req.flash("success", refundMessage);
+    res.redirect("/bookings");
 }));
 
 // Wishlist toggle route

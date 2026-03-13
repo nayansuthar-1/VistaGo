@@ -40,7 +40,7 @@
           <i class="fa-solid fa-chevron-left" style="font-size: 1.1rem;"></i>
         </a>
         <div class="d-flex gap-3">
-          <button class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; padding: 0;">
+          <button id="share-btn-mobile" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; padding: 0;">
             <i class="fa-solid fa-arrow-up-from-bracket" style="font-size: 1rem;"></i>
           </button>
           <% if(currUser && currUser.wishlist && currUser.wishlist.includes(listing._id)) { %>
@@ -172,54 +172,84 @@
             <span class="text-muted ms-1 text-lowercase">night</span>
           </div>
 
-          <form action="/listings/<%= listing._id %>/bookings" method="POST" id="booking-form">
-            <div class="border rounded-4 mb-3">
-              <div class="d-flex border-bottom pointer-cursor" id="date-picker-trigger">
-                <div class="p-2 px-3 border-end w-50">
-                  <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Check-in</label>
-                  <input type="text" name="booking[checkIn]" id="checkIn" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
-                </div>
-                <div class="p-2 px-3 w-50">
-                  <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Checkout</label>
-                  <input type="text" name="booking[checkOut]" id="checkOut" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
-                </div>
-              </div>
-              <div class="px-3 py-2 position-relative" style="cursor: pointer;">
-                <div id="guest-dropdown-toggle">
-                  <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem; cursor: pointer;">Guests</label>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span id="guest-count-display" class="fs-6">1 guest</span>
-                    <i class="fa-solid fa-chevron-down small text-muted"></i>
-                  </div>
-                </div>
-                
-                <!-- Airbnb-style Guest Dropdown -->
-                <div id="guest-dropdown" class="position-absolute start-0 end-0 bg-white border rounded-3 shadow-lg p-3 mt-2 d-none" style="z-index: 1000; top: 100%;">
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                      <div class="fw-bold fs-6">Guests</div>
-                      <div class="text-muted small">Ages 13 or above</div>
+          <% if(userBooking) { %>
+            <div class="card border-success border-2 rounded-4 mb-4 bg-light overflow-hidden shadow-sm">
+                <div class="card-body p-4 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-2 text-success mb-3">
+                        <i class="fa-solid fa-circle-check fs-4"></i>
+                        <h4 class="fw-bold m-0">You've Reserved This!</h4>
                     </div>
-                    <div class="d-flex align-items-center gap-3">
-                      <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-minus" style="width: 32px; height: 32px; padding: 0;" disabled>-</button>
-                      <span id="guest-count-val" class="fw-bold">1</span>
-                      <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-plus" style="width: 32px; height: 32px; padding: 0;">+</button>
+                    
+                    <p class="text-muted small mb-4">
+                        Your stay is booked from <strong><%= userBooking.checkIn.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) %></strong> 
+                        to <strong><%= userBooking.checkOut.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) %></strong>.
+                    </p>
+
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success py-3 rounded-3 fw-bold fs-5 shadow-sm" style="cursor: default; opacity: 1;">
+                            <i class="fa-solid fa-check-double me-2"></i> Reserved
+                        </button>
+                        
+                        <form method="POST" action="/listings/bookings/<%= userBooking._id %>/cancel?_method=DELETE" onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                            <button class="btn btn-outline-danger w-100 py-2 rounded-3 fw-bold small">
+                                <i class="fa-solid fa-calendar-xmark me-2"></i> Cancel Reservation
+                            </button>
+                        </form>
                     </div>
-                  </div>
-                  <div class="text-end mt-2">
-                    <button type="button" id="close-guest-dropdown" class="btn btn-sm btn-dark px-3 rounded-2 fw-bold">Close</button>
-                  </div>
+                    
+                    <a href="/bookings" class="d-inline-block mt-3 text-dark text-decoration-underline small fw-bold">View all my trips</a>
                 </div>
-                
-                <input type="hidden" name="booking[guests]" id="guests-input" value="1">
-              </div>
             </div>
+          <% } else { %>
+            <form action="/listings/<%= listing._id %>/checkout-review" method="POST" id="booking-form">
+              <div class="border rounded-4 mb-3">
+                <div class="d-flex border-bottom pointer-cursor" id="date-picker-trigger">
+                  <div class="p-2 px-3 border-end w-50">
+                    <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Check-in</label>
+                    <input type="text" name="booking[checkIn]" id="checkIn" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
+                  </div>
+                  <div class="p-2 px-3 w-50">
+                    <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Checkout</label>
+                    <input type="text" name="booking[checkOut]" id="checkOut" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
+                  </div>
+                </div>
+                <div class="px-3 py-2 position-relative" style="cursor: pointer;">
+                  <div id="guest-dropdown-toggle">
+                    <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem; cursor: pointer;">Guests</label>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span id="guest-count-display" class="fs-6">1 guest</span>
+                      <i class="fa-solid fa-chevron-down small text-muted"></i>
+                    </div>
+                  </div>
+                  
+                  <!-- Airbnb-style Guest Dropdown -->
+                  <div id="guest-dropdown" class="position-absolute start-0 end-0 bg-white border rounded-3 shadow-lg p-3 mt-2 d-none" style="z-index: 1000; top: 100%;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div>
+                        <div class="fw-bold fs-6">Guests</div>
+                        <div class="text-muted small">Ages 13 or above</div>
+                      </div>
+                      <div class="d-flex align-items-center gap-3">
+                        <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-minus" style="width: 32px; height: 32px; padding: 0;" disabled>-</button>
+                        <span id="guest-count-val" class="fw-bold">1</span>
+                        <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-plus" style="width: 32px; height: 32px; padding: 0;">+</button>
+                      </div>
+                    </div>
+                    <div class="text-end mt-2">
+                      <button type="button" id="close-guest-dropdown" class="btn btn-sm btn-dark px-3 rounded-2 fw-bold">Close</button>
+                    </div>
+                  </div>
+                  
+                  <input type="hidden" name="booking[guests]" id="guests-input" value="1">
+                </div>
+              </div>
 
-            <input type="hidden" name="booking[totalPrice]" id="final-total" value="0">
-            <input type="hidden" name="booking[nights]" id="total-nights" value="0">
+              <input type="hidden" name="booking[totalPrice]" id="final-total" value="0">
+              <input type="hidden" name="booking[nights]" id="total-nights" value="0">
 
-            <button type="submit" id="reserve-btn" class="btn btn-brand w-100 py-3 rounded-3 fw-bold text-white fs-5 mb-3" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Reserve</button>
-          </form>
+              <button type="submit" id="reserve-btn" class="btn btn-brand w-100 py-3 rounded-3 fw-bold text-white fs-5 mb-3" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Reserve</button>
+            </form>
+          <% } %>
           
           <div id="price-summary" class="d-none">
             <div class="text-center text-muted mb-4" style="font-size: 0.9rem;">You won't be charged yet</div>
@@ -379,80 +409,109 @@
         <span class="fw-bold fs-5">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %></span>
         <span class="text-muted ms-1 small">night</span>
       </div>
-      <a href="#booking-form-mobile" class="text-dark text-decoration-underline small fw-bold"><u>Select dates</u></a>
+      <% if(userBooking) { %>
+        <span class="text-success small fw-bold"><i class="fa-solid fa-circle-check"></i> Reserved</span>
+      <% } else { %>
+        <a href="#booking-form-mobile" class="text-dark text-decoration-underline small fw-bold"><u>Select dates</u></a>
+      <% } %>
     </div>
-    <button type="button" class="btn btn-brand px-4 py-2 rounded-3 fw-bold text-white" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);" onclick="document.getElementById('booking-form-mobile').scrollIntoView({behavior: 'smooth'})">Reserve</button>
+    
+    <% if(userBooking) { %>
+        <a href="#booking-form-mobile" class="btn btn-success px-4 py-2 rounded-3 fw-bold text-white">View Trip</a>
+    <% } else { %>
+        <button type="button" class="btn btn-brand px-4 py-2 rounded-3 fw-bold text-white" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);" onclick="document.getElementById('booking-form-mobile').scrollIntoView({behavior: 'smooth'})">Reserve</button>
+    <% } %>
   </div>
 </div>
 
 <!-- Mobile Booking Form (Visible only on mobile, below details) -->
 <div class="col-12 d-md-none px-3" id="booking-form-mobile">
   <div class="card shadow border rounded-4 p-4 mt-4">
-    <div class="d-flex align-items-baseline mb-4">
-      <h4 class="fw-bold mb-0">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %></h4>
-      <span class="text-muted ms-1">night</span>
-    </div>
-    
-    <form action="/listings/<%= listing._id %>/bookings" method="POST">
-      <div class="border rounded-4 mb-3">
-        <div class="d-flex border-bottom pointer-cursor">
-          <div class="p-2 px-3 border-end w-50">
-            <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Check-in</label>
-            <input type="text" name="booking[checkIn]" id="checkInMobile" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
-          </div>
-          <div class="p-2 px-3 w-50">
-            <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Checkout</label>
-            <input type="text" name="booking[checkOut]" id="checkOutMobile" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
-          </div>
+    <% if(userBooking) { %>
+      <div class="text-center py-4">
+        <div class="text-success mb-3">
+            <i class="fa-solid fa-circle-check fs-1"></i>
         </div>
-        <div class="px-3 py-2 position-relative" style="cursor: pointer;">
-          <div id="guest-dropdown-toggle-mobile">
-            <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem; cursor: pointer;">Guests</label>
-            <div class="d-flex justify-content-between align-items-center">
-              <span id="guest-count-display-mobile" class="fs-6">1 guest</span>
-              <i class="fa-solid fa-chevron-down small text-muted"></i>
-            </div>
-          </div>
-          
-          <!-- Mobile Guest Dropdown -->
-          <div id="guest-dropdown-mobile" class="position-absolute start-0 end-0 bg-white border rounded-3 shadow-lg p-3 mt-2 d-none" style="z-index: 1000; top: 100%;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <div>
-                <div class="fw-bold fs-6">Guests</div>
-                <div class="text-muted small">Ages 13 or above</div>
-              </div>
-              <div class="d-flex align-items-center gap-3">
-                <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-minus-mobile" style="width: 32px; height: 32px; padding: 0;" disabled>-</button>
-                <span id="guest-count-val-mobile" class="fw-bold">1</span>
-                <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-plus-mobile" style="width: 32px; height: 32px; padding: 0;">+</button>
-              </div>
-            </div>
-            <div class="text-end mt-2">
-              <button type="button" id="close-guest-dropdown-mobile" class="btn btn-sm btn-dark px-3 rounded-2 fw-bold">Close</button>
-            </div>
-          </div>
-          
-          <input type="hidden" name="booking[guests]" id="guests-input-mobile" value="1">
+        <h4 class="fw-bold">Reservation Confirmed!</h4>
+        <p class="text-muted small">You've successfully reserved this luxury stay.</p>
+        
+        <div class="d-grid mt-4">
+            <form method="POST" action="/listings/bookings/<%= userBooking._id %>/cancel?_method=DELETE" onsubmit="return confirm('Are you sure you want to cancel this reservation?');">
+                <button class="btn btn-outline-danger w-100 py-3 rounded-3 fw-bold">
+                    <i class="fa-solid fa-calendar-xmark me-2"></i> Cancel Reservation
+                </button>
+            </form>
         </div>
       </div>
-
-      <!-- Hidden inputs for mobile price details -->
-      <input type="hidden" name="booking[totalPrice]" id="final-total-mobile" value="0">
-      <input type="hidden" name="booking[nights]" id="total-nights-mobile" value="0">
-
-      <button type="submit" class="btn btn-brand w-100 py-3 rounded-3 fw-bold text-white fs-5 mb-3" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Reserve</button>
-      
-      <div id="price-summary-mobile" class="d-none">
-        <div class="d-flex justify-content-between mb-2 text-muted small">
-          <span id="night-calc-label-mobile">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %> x 0 nights</span>
-          <span id="base-price-total-mobile">&#8377; 0</span>
+    <% } else { %>
+      <div class="card shadow border rounded-4 p-4 mt-4">
+        <div class="d-flex align-items-baseline mb-4">
+          <h4 class="fw-bold mb-0">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %></h4>
+          <span class="text-muted ms-1">night</span>
         </div>
-        <div class="d-flex justify-content-between fw-bold border-top pt-2">
-          <span>Total before taxes</span>
-          <span id="final-price-display-mobile">&#8377; 0</span>
-        </div>
+        
+        <form action="/listings/<%= listing._id %>/checkout-review" method="POST">
+          <div class="border rounded-4 mb-3">
+            <div class="d-flex border-bottom pointer-cursor">
+              <div class="p-2 px-3 border-end w-50">
+                <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Check-in</label>
+                <input type="text" name="booking[checkIn]" id="checkInMobile" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
+              </div>
+              <div class="p-2 px-3 w-50">
+                <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem;">Checkout</label>
+                <input type="text" name="booking[checkOut]" id="checkOutMobile" class="border-0 w-100 fs-6 outline-none bg-transparent" placeholder="Add date" readonly required>
+              </div>
+            </div>
+            <div class="px-3 py-2 position-relative" style="cursor: pointer;">
+              <div id="guest-dropdown-toggle-mobile">
+                <label class="text-uppercase fw-bold text-muted" style="font-size: 0.65rem; cursor: pointer;">Guests</label>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span id="guest-count-display-mobile" class="fs-6">1 guest</span>
+                  <i class="fa-solid fa-chevron-down small text-muted"></i>
+                </div>
+              </div>
+              
+              <!-- Mobile Guest Dropdown -->
+              <div id="guest-dropdown-mobile" class="position-absolute start-0 end-0 bg-white border rounded-3 shadow-lg p-3 mt-2 d-none" style="z-index: 1000; top: 100%;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <div class="fw-bold fs-6">Guests</div>
+                    <div class="text-muted small">Ages 13 or above</div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-minus-mobile" style="width: 32px; height: 32px; padding: 0;" disabled>-</button>
+                    <span id="guest-count-val-mobile" class="fw-bold">1</span>
+                    <button type="button" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center guest-btn" id="guest-plus-mobile" style="width: 32px; height: 32px; padding: 0;">+</button>
+                  </div>
+                </div>
+                <div class="text-end mt-2">
+                  <button type="button" id="close-guest-dropdown-mobile" class="btn btn-sm btn-dark px-3 rounded-2 fw-bold">Close</button>
+                </div>
+              </div>
+              
+              <input type="hidden" name="booking[guests]" id="guests-input-mobile" value="1">
+            </div>
+          </div>
+
+          <!-- Hidden inputs for mobile price details -->
+          <input type="hidden" name="booking[totalPrice]" id="final-total-mobile" value="0">
+          <input type="hidden" name="booking[nights]" id="total-nights-mobile" value="0">
+
+          <button type="submit" class="btn btn-brand w-100 py-3 rounded-3 fw-bold text-white fs-5 mb-3" style="background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);">Reserve</button>
+          
+          <div id="price-summary-mobile" class="d-none">
+            <div class="d-flex justify-content-between mb-2 text-muted small">
+              <span id="night-calc-label-mobile">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %> x 0 nights</span>
+              <span id="base-price-total-mobile">&#8377; 0</span>
+            </div>
+            <div class="d-flex justify-content-between fw-bold border-top pt-2">
+              <span>Total before taxes</span>
+              <span id="final-price-display-mobile">&#8377; 0</span>
+            </div>
+          </div>
+        </form>
       </div>
-    </form>
+    <% } %>
   </div>
 </div>
 

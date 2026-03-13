@@ -129,11 +129,30 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
-  console.log(res.locals.success);
   res.locals.error = req.flash("error");
-  console.log(res.locals.error);
   res.locals.currUser = req.user;
   next();
+});
+
+// Legal and Payment Pages
+app.get("/privacy", (req, res) => {
+  res.render("pages/privacy.ejs");
+});
+
+app.get("/terms", (req, res) => {
+  res.render("pages/terms.ejs");
+});
+
+app.get("/about", (req, res) => {
+  res.render("pages/about.ejs");
+});
+
+app.get("/contact", (req, res) => {
+  res.render("pages/contact.ejs");
+});
+
+app.get("/policy", (req, res) => {
+  res.render("pages/policy.ejs");
 });
 
 // app.get("/demouser", async (req, res) => {

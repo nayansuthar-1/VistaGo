@@ -12,7 +12,13 @@
               <div class="position-relative" style="height: 200px;">
                 <img src="<%= booking.listing.image.url %>" class="card-img-top h-100 w-100" style="object-fit: cover;" alt="listing-image">
                 <div class="position-absolute top-0 end-0 p-3">
-                   <span class="badge bg-white text-dark shadow-sm">Confirmed</span>
+                   <% if(booking.status === 'confirmed') { %>
+                    <span class="badge bg-success text-white shadow-sm px-3 py-2">Confirmed</span>
+                   <% } else if(booking.status === 'cancelled') { %>
+                    <span class="badge bg-danger text-white shadow-sm px-3 py-2">Cancelled</span>
+                   <% } else { %>
+                    <span class="badge bg-warning text-dark shadow-sm px-3 py-2"><%= booking.status.charAt(0).toUpperCase() + booking.status.slice(1) %></span>
+                   <% } %>
                 </div>
               </div>
               <div class="card-body p-4">
@@ -37,11 +43,16 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <div class="text-muted small">Total Paid</div>
-                    <div class="fs-5 fw-bold text-dark">&#8377; <%= booking.totalPrice.toLocaleString() %></div>
+                    <div class="text-muted small"><%= booking.status === 'cancelled' ? (booking.refundAmount > 0 ? 'Refund Initiated' : 'No Refund Applicable') : 'Total Paid' %></div>
+                    <div class="fs-5 fw-bold text-dark">&#8377; <%= booking.status === 'cancelled' ? booking.refundAmount.toLocaleString() : booking.totalPrice.toLocaleString() %></div>
+                  <div class="d-flex gap-2">
+                    <% if(booking.status === 'confirmed') { %>
+                        <form method="POST" action="/listings/bookings/<%= booking._id %>/cancel?_method=DELETE" onsubmit="return confirm('Are you sure you want to cancel this booking? This action is non-reversible.');">
+                            <button class="btn btn-sm btn-outline-danger rounded-3 px-3 fw-bold">Cancel</button>
+                        </form>
+                    <% } %>
+                    <a href="/listings/<%= booking.listing._id %>" class="btn btn-sm btn-outline-dark rounded-3 px-3 fw-bold">View</a>
                   </div>
-                  <a href="/listings/<%= booking.listing._id %>" class="btn btn-outline-dark rounded-3 px-4 fw-bold">View Booking</a>
                 </div>
               </div>
             </div>

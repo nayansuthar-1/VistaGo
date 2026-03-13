@@ -104,6 +104,12 @@ body {
   padding-bottom: 0.5rem;
 }
 
+@media (min-width: 992px) {
+  .category-carousel {
+    justify-content: center;
+  }
+}
+
 .category-carousel::-webkit-scrollbar {
   display: none; /* Chrome/Safari */
 }
@@ -203,9 +209,9 @@ body {
     flex-shrink: 1;
   }
 
-  /* Padding for fixed bottom bar */
-  body {
-    padding-bottom: 80px; 
+  /* Padding for fixed bottom bar only on show page */
+  body.show-page-body {
+    padding-bottom: 90px; 
   }
 }
 
@@ -622,6 +628,60 @@ body {
 
 .account-card:hover i {
   transform: scale(1.1);
+}
+
+/* Mobile Bottom Booking Bar (Airbnb-style) */
+.mobile-booking-bar {
+  z-index: 2000 !important;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.08) !important;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 767px) {
+  /* Hide the general footer on the show page only to avoid double bars/clutter */
+  body.show-page-body .footer {
+    display: none !important;
+  }
+  
+  .mobile-booking-bar .fs-5 {
+    font-size: 1.1rem !important;
+  }
+  
+  .mobile-booking-bar .small {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* Global Footer Adjustments */
+@media (max-width: 767px) {
+  .footer {
+    text-align: center !important;
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+  
+  .footer .link-group-container {
+    gap: 0.5rem;
+  }
+  
+  .footer-links-row {
+    font-size: 0.85rem;
+    width: 100%;
+    justify-content: center !important;
+  }
+
+  .footer-socials {
+    margin-top: 0.5rem;
+  }
+}
+
+.hover-opacity:hover {
+  opacity: 0.7;
+}
+
+.footer .text-muted a:hover {
+  color: var(--brand-color) !important;
 }
 
 .my-listings-dashboard .card {

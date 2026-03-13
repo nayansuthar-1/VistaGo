@@ -90,12 +90,14 @@
           const response = await fetch(`/listings/${listingId}/wishlist`, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+              "X-Requested-With": "XMLHttpRequest"
             }
           });
 
           if (response.status === 401) {
-             window.location.href = "/login";
+             window.location.href = "/signup";
              return;
           }
 
@@ -278,6 +280,48 @@
     }
 
     updateGuestCountMobile(1);
+  }
+
+  // --- Share Functionality ---
+  const shareBtns = document.querySelectorAll("#share-btn, #share-btn-mobile");
+  if (shareBtns.length > 0) {
+    shareBtns.forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const title = document.title;
+        const url = window.location.href;
+        const text = "Check out this amazing place on VistaGo!";
+
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: title,
+              text: text,
+              url: url
+            });
+          } catch (err) {
+            if (err.name !== "AbortError") {
+              console.error("Error sharing:", err);
+            }
+          }
+        } else {
+          // Fallback: Copy to clipboard
+          try {
+            await navigator.clipboard.writeText(url);
+            // Simple visual feedback if possible, or just log
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-check me-1"></i> Copied`;
+            setTimeout(() => {
+              btn.innerHTML = originalHTML;
+            }, 2000);
+          } catch (err) {
+            console.error("Fallback sharing error:", err);
+          }
+        }
+      });
+    });
   }
 
   // --- Booking Date Picker & Price Calculation ---
