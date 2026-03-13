@@ -515,6 +515,29 @@
   </div>
 </div>
 
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const mobileBar = document.querySelector(".mobile-booking-bar");
+    const mobileBookingForm = document.getElementById("booking-form-mobile");
+
+    if (mobileBar && mobileBookingForm) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            mobileBar.classList.add("mobile-bar-hidden");
+          } else {
+            mobileBar.classList.remove("mobile-bar-hidden");
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+
+      observer.observe(mobileBookingForm);
+    }
+  });
+</script>
+
 <!-- Amenities Modal -->
 <div class="modal fade" id="amenitiesModal" tabindex="-1" aria-labelledby="amenitiesModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">

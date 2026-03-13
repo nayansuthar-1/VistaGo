@@ -635,13 +635,19 @@ body {
   z-index: 2000 !important;
   box-shadow: 0 -4px 12px rgba(0,0,0,0.08) !important;
   padding-bottom: calc(1rem + env(safe-area-inset-bottom)) !important;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.mobile-bar-hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 @media (max-width: 767px) {
-  /* Hide the general footer on the show page only to avoid double bars/clutter */
+  /* Show footer but allow for bottom bar padding */
   body.show-page-body .footer {
-    display: none !important;
+    padding-bottom: 100px;
   }
   
   .mobile-booking-bar .fs-5 {
