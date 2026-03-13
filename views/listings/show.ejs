@@ -86,7 +86,7 @@
       <div class="col-12 col-md-7 pe-md-5">
         <div class="d-flex justify-content-between align-items-center pb-4 border-bottom mobile-hide">
           <div>
-            <h4 class="fw-bold mb-1">Room in a rental unit hosted by <%= listing.owner ? listing.owner.username : "Airbnb Host" %></h4>
+            <h4 class="fw-bold mb-1">Room in a rental unit hosted by <%= listing.owner ? listing.owner.username : "VistaGo Host" %></h4>
             <p class="text-muted mb-0">2 guests &middot; 1 bedroom &middot; 1 bed &middot; 1 bath</p>
           </div>
           <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px;">
@@ -256,7 +256,7 @@
           <% } %>
           
           <div id="price-summary" class="d-none">
-            <div class="text-center text-muted mb-4" style="font-size: 0.9rem;">You won't be charged yet</div>
+            <div class="text-center text-muted mb-4" style="font-size: 0.9rem;">Pay the booking amount only to book your stay</div>
             
             <div class="d-flex justify-content-between mb-2 text-decoration-underline text-muted">
               <span id="night-calc-label">&#8377; <%= listing.price ? listing.price.toLocaleString() : "N/A" %> x 0 nights</span>

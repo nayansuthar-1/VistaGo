@@ -9,6 +9,7 @@ const Listing = require("../models/listing.js");
 const Booking = require("../models/booking.js");
 const Review = require("../models/review.js");
 const { isLoggedIn } = require("../middleware.js");
+const Message = require("../models/message.js");
 
 router.get("/signup", (req, res) => {
   res.render("users/signup.ejs");
@@ -53,7 +54,7 @@ router.post(
     await Listing.updateMany({ owner: req.user._id }, { isDeactivated: false });
     await Review.updateMany({ author: req.user._id }, { isDeactivated: false });
     
-    req.flash("success", "Welcome back! Your account has been reactivated.");
+    req.flash("success", "Welcome back!");
     let redirectUrl = res.locals.redirectUrl || "/listings";
     res.redirect(redirectUrl);
   }
@@ -72,6 +73,14 @@ router.get("/bookings", isLoggedIn, wrapAsync(async (req, res) => {
 router.get("/wishlist", isLoggedIn, wrapAsync(async (req, res) => {
   const user = await User.findById(req.user._id).populate("wishlist");
   res.render("users/wishlist.ejs", { user });
+}));
+
+router.get("/messages", isLoggedIn, wrapAsync(async (req, res) => {
+  const allMessages = await Message.find({ receiver: req.user._id })
+    .populate("sender", "username")
+    .populate("listing", "title")
+    .sort({ createdAt: -1 });
+  res.render("users/messages.ejs", { allMessages });
 }));
 
 router.get("/account", isLoggedIn, (req, res) => {

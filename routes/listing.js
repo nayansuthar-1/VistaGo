@@ -13,6 +13,7 @@ const upload = multer({ storage });
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const Message = require("../models/message.js");
 
 // --- Helper Functions ---
 async function sendBookingConfirmationEmail(email, booking, listing) {
@@ -363,6 +364,20 @@ router.post("/verify-payment", isLoggedIn, wrapAsync(async (req, res) => {
         // Send Email Receipt
         if (req.body.receiptEmail) {
             sendBookingConfirmationEmail(req.body.receiptEmail, booking, booking.listing);
+        }
+
+        // Automatic Host Notification Message
+        try {
+            const hostMessage = new Message({
+                sender: booking.user,
+                receiver: booking.listing.owner,
+                content: `New Booking Alert! ${req.user.username} has just booked "${booking.listing.title}" from ${new Date(booking.checkIn).toLocaleDateString('en-IN')} to ${new Date(booking.checkOut).toLocaleDateString('en-IN')}.`,
+                listing: booking.listing._id
+            });
+            await hostMessage.save();
+            console.log("Automatic notification sent to host:", booking.listing.owner);
+        } catch (msgErr) {
+            console.error("Failed to send automatic host notification message:", msgErr);
         }
 
         res.json({ success: true });

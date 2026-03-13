@@ -1,0 +1,85 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row mt-4 mb-5 justify-content-center">
+  <div class="col-12 col-lg-10">
+    <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+      <h2 class="fw-bold mb-0">Messages</h2>
+      <div class="dropdown">
+        <button class="btn btn-outline-dark rounded-pill px-3 py-2 fw-bold small" type="button" data-bs-toggle="dropdown">
+          <i class="fa-solid fa-sliders me-2"></i> All messages
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+          <li><a class="dropdown-item py-2" href="#">Unread</a></li>
+          <li><a class="dropdown-item py-2" href="#">Archived</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Inbox UI -->
+    <div class="card border rounded-4 overflow-hidden shadow-sm" style="min-height: 600px;">
+      <div class="row g-0 h-100" style="min-height: 600px;">
+        <!-- Conversation List -->
+        <div class="col-12 col-md-4 border-end bg-white">
+          <div class="p-3 border-bottom sticky-top bg-white" style="z-index: 5;">
+            <div class="input-group rounded-pill border overflow-hidden bg-light px-2" style="border-color: #ddd !important;">
+              <span class="input-group-text border-0 bg-transparent text-muted"><i class="fa-solid fa-magnifying-glass small"></i></span>
+              <input type="text" class="form-control border-0 bg-transparent py-2 small" placeholder="Search messages">
+            </div>
+          </div>
+          
+          <div class="conversation-list overflow-auto" style="max-height: 530px;">
+             <% if (allMessages && allMessages.length > 0) { %>
+               <% for(let msg of allMessages) { %>
+                 <div class="conversation-item p-3 border-bottom hover-bg-light pointer-cursor <%= !msg.isRead ? 'active-message' : '' %>">
+                    <div class="d-flex gap-3">
+                       <div class="bg-brand text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                          <i class="fa-solid fa-suitcase"></i>
+                       </div>
+                       <div class="flex-grow-1 overflow-hidden">
+                          <div class="d-flex justify-content-between align-items-baseline">
+                             <h6 class="fw-bold mb-0 text-truncate"><%= msg.sender ? msg.sender.username : "System" %></h6>
+                             <span class="text-muted small"><%= msg.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></span>
+                          </div>
+                          <p class="text-muted small mb-0 text-truncate fw-medium text-dark"><%= msg.content %></p>
+                       </div>
+                    </div>
+                 </div>
+               <% } %>
+             <% } else { %>
+               <div class="p-5 text-center mt-5 text-muted opacity-50">
+                  <i class="fa-regular fa-message fs-1 mb-3"></i>
+                  <p>No messages yet</p>
+               </div>
+             <% } %>
+          </div>
+        </div>
+
+        <!-- Chat Area (Placeholder) -->
+        <div class="col-md-8 d-none d-md-flex flex-column bg-light">
+          <div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 p-5 text-center">
+            <div class="bg-white rounded-circle shadow-sm p-4 mb-4">
+              <i class="fa-solid fa-comments text-brand" style="font-size: 3rem;"></i>
+            </div>
+            <h4 class="fw-bold">Select a message</h4>
+            <p class="text-muted px-md-5">Choose a conversation from the list to view the details or start a new message with a host.</p>
+            <a href="/listings" class="btn btn-dark rounded-pill px-4 py-2 mt-2 fw-bold">Explore Listings</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .conversation-item {
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .active-message {
+    background-color: #f7f7f7;
+    border-left: 4px solid var(--brand-color);
+  }
+  .hover-bg-light:hover {
+    background-color: #f7f7f7;
+  }
+</style>

@@ -21,8 +21,17 @@ body {
   color: var(--text-muted) !important;
 }
 
-.text-brand, .brand-icon {
+.text-brand {
   color: var(--brand-color) !important;
+}
+
+.brand-logo-combined {
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.brand-logo-combined:hover {
+  transform: scale(1.05);
 }
 
 .bg-brand {
@@ -56,10 +65,20 @@ body {
 /* Navbar overrides */
 .navbar {
   background-color: white !important;
+  height: 5rem !important; /* PC Height */
+  min-height: 5rem !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
-.brand-icon {
-  font-size: 2rem;
+.brand-logo-combined {
+  height: 110px !important; /* Prominent but balanced */
+  width: auto !important;
+  z-index: 1051;
+  position: relative;
+  top: 0;
 }
 
 .nav-search .search-btn {
@@ -197,12 +216,18 @@ body {
 
 @media (max-width: 767px) {
   .navbar {
-    height: auto !important;
-    padding: 0.6rem 0;
+    height: 4.5rem !important; /* Standard mobile navbar strip */
+    min-height: 4.5rem !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
   }
   
-  .brand-icon {
-    font-size: 1.5rem !important;
+  .brand-logo-combined {
+    height: 60px !important; /* Smaller base height to fit navbar */
+    transform: scale(1.6); /* Visually expands the logo */
+    transform-origin: left center;
+    margin-right: 2rem; /* Buffer for the expanded scale */
   }
   
   .category-carousel {
