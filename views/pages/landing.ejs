@@ -1,0 +1,536 @@
+<!-- <% layout("/layouts/boilerplate") -%>w -->
+
+<script>
+  // Add landing page class for full-width sections
+  document.body.classList.add("landing-page-body");
+</script>
+
+<!-- Hero Section -->
+<section class="landing-hero">
+  <div class="hero-bg-overlay"></div>
+  <div class="hero-content text-center text-white position-relative" style="z-index: 2;">
+    <div class="hero-badge mb-4">
+      <span><i class="fa-solid fa-sparkle me-1"></i> Your next adventure starts here</span>
+    </div>
+    <h1 class="hero-title">Discover Stays That<br>Feel Like <span class="hero-highlight">Home</span></h1>
+    <p class="hero-subtitle mx-auto">Handpicked homes, villas, and unique stays across India. Book with confidence, travel with joy.</p>
+    <div class="hero-cta">
+      <a href="/listings" class="btn btn-hero-primary">
+        Get Started <i class="fa-solid fa-arrow-right ms-2"></i>
+      </a>
+      <a href="#how-it-works" class="btn btn-hero-outline">
+        Learn More
+      </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="hero-stats mt-5">
+      <div class="stat-item">
+        <span class="stat-number">500+</span>
+        <span class="stat-label">Listed Properties</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">10K+</span>
+        <span class="stat-label">Happy Guests</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">50+</span>
+        <span class="stat-label">Destinations</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating scroll indicator -->
+  <div class="scroll-indicator">
+    <i class="fa-solid fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- Categories Preview Section -->
+<section class="landing-section" id="how-it-works">
+  <div class="text-center mb-5">
+    <h2 class="section-title">How VistaGo Works</h2>
+    <p class="section-subtitle">Three simple steps to your perfect getaway</p>
+  </div>
+  <div class="row g-4 justify-content-center">
+    <div class="col-12 col-md-4">
+      <div class="step-card text-center">
+        <div class="step-icon-wrap">
+          <i class="fa-solid fa-magnifying-glass-location"></i>
+        </div>
+        <h5 class="fw-bold mt-4 mb-2">Search & Discover</h5>
+        <p class="text-muted small">Browse hundreds of handpicked properties across beautiful destinations in India.</p>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="step-card text-center">
+        <div class="step-icon-wrap">
+          <i class="fa-solid fa-calendar-check"></i>
+        </div>
+        <h5 class="fw-bold mt-4 mb-2">Book Instantly</h5>
+        <p class="text-muted small">Select your dates, pick your guests, and pay securely with Razorpay — no hidden fees.</p>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="step-card text-center">
+        <div class="step-icon-wrap">
+          <i class="fa-solid fa-plane-departure"></i>
+        </div>
+        <h5 class="fw-bold mt-4 mb-2">Travel & Enjoy</h5>
+        <p class="text-muted small">Check in, unwind, and create unforgettable memories at your dream destination.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Highlights -->
+<section class="landing-section bg-light-section">
+  <div class="text-center mb-5">
+    <h2 class="section-title">Why Travelers Love VistaGo</h2>
+    <p class="section-subtitle">Built for explorers, designed for comfort</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-6 col-lg-3">
+      <div class="feature-card">
+        <i class="fa-solid fa-shield-halved feature-icon"></i>
+        <h6 class="fw-bold mt-3">Secure Payments</h6>
+        <p class="text-muted x-small mb-0">Powered by Razorpay with full encryption</p>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="feature-card">
+        <i class="fa-solid fa-star feature-icon"></i>
+        <h6 class="fw-bold mt-3">Verified Reviews</h6>
+        <p class="text-muted x-small mb-0">Real reviews from real guests</p>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="feature-card">
+        <i class="fa-solid fa-headset feature-icon"></i>
+        <h6 class="fw-bold mt-3">24/7 Support</h6>
+        <p class="text-muted x-small mb-0">We're here whenever you need us</p>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="feature-card">
+        <i class="fa-solid fa-tags feature-icon"></i>
+        <h6 class="fw-bold mt-3">Best Prices</h6>
+        <p class="text-muted x-small mb-0">Competitive rates, no hidden charges</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Destinations -->
+<section class="landing-section">
+  <div class="text-center mb-5">
+    <h2 class="section-title">Popular Destinations</h2>
+    <p class="section-subtitle">The most loved spots by our community</p>
+  </div>
+  <div class="row g-3 g-md-4">
+    <div class="col-6 col-md-4">
+      <a href="/listings?location=goa" class="destination-card" style="background-image: url('https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80');">
+        <div class="destination-overlay">
+          <h5 class="mb-0 fw-bold">Goa</h5>
+          <span class="small">Beaches & Nightlife</span>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-4">
+      <a href="/listings?location=manali" class="destination-card" style="background-image: url('https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&q=80');">
+        <div class="destination-overlay">
+          <h5 class="mb-0 fw-bold">Manali</h5>
+          <span class="small">Mountains & Snow</span>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-4">
+      <a href="/listings?location=jaipur" class="destination-card" style="background-image: url('https://images.unsplash.com/photo-1477587458883-47145ed94245?w=600&q=80');">
+        <div class="destination-overlay">
+          <h5 class="mb-0 fw-bold">Jaipur</h5>
+          <span class="small">Heritage & Culture</span>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-4">
+      <a href="/listings?location=kerala" class="destination-card" style="background-image: url('https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=600&q=80');">
+        <div class="destination-overlay">
+          <h5 class="mb-0 fw-bold">Kerala</h5>
+          <span class="small">Backwaters & Nature</span>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-4">
+      <a href="/listings?location=mumbai" class="destination-card" style="background-image: url('https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=600&q=80');">
+        <div class="destination-overlay">
+          <h5 class="mb-0 fw-bold">Mumbai</h5>
+          <span class="small">City & Lifestyle</span>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-md-4">
+      <a href="/listings?location=udaipur" class="destination-card" style="background-image: url('https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=600&q=80');">
+        <div class="destination-overlay">
+          <h5 class="mb-0 fw-bold">Udaipur</h5>
+          <span class="small">Lakes & Royalty</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="landing-cta">
+  <div class="cta-inner text-center text-white">
+    <h2 class="fw-bold mb-3" style="font-size: 2rem;">Ready for Your Next Adventure?</h2>
+    <p class="mb-4 opacity-75" style="max-width: 480px; margin: 0 auto;">Join thousands of travelers discovering extraordinary stays across India.</p>
+    <a href="/listings" class="btn btn-hero-primary btn-lg">
+      Explore All Stays <i class="fa-solid fa-arrow-right ms-2"></i>
+    </a>
+  </div>
+</section>
+
+<style>
+/* ===== Landing Page Specific Styles ===== */
+
+/* Full-width breakout from container */
+body.landing-page-body > .container-fluid {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Hero Section */
+.landing-hero {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1600&q=80') center/cover no-repeat;
+  overflow: hidden;
+}
+
+.hero-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.55) 100%);
+  z-index: 1;
+}
+
+.hero-content {
+  padding: 2rem 1.5rem;
+  max-width: 720px;
+}
+
+.hero-badge span {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
+}
+
+.hero-highlight {
+  background: linear-gradient(135deg, #FF385C, #FF6B6B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  max-width: 480px;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-hero-primary {
+  background: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
+  color: white;
+  border: none;
+  padding: 0.85rem 2.25rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(230, 30, 77, 0.4);
+}
+
+.btn-hero-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(230, 30, 77, 0.55);
+  color: white;
+}
+
+.btn-hero-outline {
+  border: 2px solid rgba(255,255,255,0.6);
+  color: white;
+  background: transparent;
+  padding: 0.85rem 2.25rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-hero-outline:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: white;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Hero Stats */
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding-top: 1.5rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-top: 0.15rem;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,0.25);
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  color: white;
+  opacity: 0.6;
+  animation: bounceDown 2s infinite;
+  font-size: 1.25rem;
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(8px); }
+}
+
+/* Landing Section */
+.landing-section {
+  padding: 5rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.bg-light-section {
+  background: #fafafa;
+  max-width: 100%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.bg-light-section > .text-center,
+.bg-light-section > .row {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #222;
+}
+
+.section-subtitle {
+  color: #717171;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Step Cards (How it works) */
+.step-card {
+  padding: 2.5rem 1.5rem;
+  border-radius: 20px;
+  background: white;
+  border: 1px solid #eee;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.step-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+  border-color: transparent;
+}
+
+.step-icon-wrap {
+  width: 70px;
+  height: 70px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fff0f3, #ffe4ea);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #FF385C;
+}
+
+/* Feature Cards */
+.feature-card {
+  padding: 1.75rem 1.25rem;
+  border-radius: 16px;
+  background: white;
+  border: 1px solid #eee;
+  text-align: center;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.feature-icon {
+  font-size: 1.75rem;
+  color: #FF385C;
+}
+
+.x-small {
+  font-size: 0.8rem;
+}
+
+/* Destination Cards */
+.destination-card {
+  display: block;
+  position: relative;
+  height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.destination-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+  color: white;
+}
+
+.destination-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 60%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.25rem;
+}
+
+/* CTA Section */
+.landing-cta {
+  padding: 5rem 2rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.cta-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .hero-stats {
+    gap: 1rem;
+  }
+
+  .stat-number {
+    font-size: 1.35rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .landing-section {
+    padding: 3rem 1.25rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .destination-card {
+    height: 160px;
+  }
+
+  .landing-cta {
+    padding: 3.5rem 1.5rem;
+  }
+
+  .landing-cta h2 {
+    font-size: 1.5rem !important;
+  }
+
+  body.landing-page-body .navbar {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  body.landing-page-body .navbar {
+    display: none !important;
+  }
+}
+</style>

@@ -83,6 +83,16 @@ router.get("/messages", isLoggedIn, wrapAsync(async (req, res) => {
   res.render("users/messages.ejs", { allMessages });
 }));
 
+router.put("/messages/:id/read", isLoggedIn, wrapAsync(async (req, res) => {
+  const msg = await Message.findById(req.params.id);
+  if (!msg || !msg.receiver.equals(req.user._id)) {
+    return res.status(403).json({ success: false });
+  }
+  msg.isRead = true;
+  await msg.save();
+  res.json({ success: true });
+}));
+
 router.get("/account", isLoggedIn, (req, res) => {
   res.render("users/account.ejs");
 });

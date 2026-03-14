@@ -81,10 +81,6 @@ app.listen(port, () => {
   console.log(`App is listening on port ${port}`);
 });
 
-app.get("/", async (req, res) => {
-  res.redirect("/listings");
-});
-
 
 
 app.use(session(sessionOptions));
@@ -138,6 +134,11 @@ app.use((req, res, next) => {
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
   next();
+});
+
+// Landing Page
+app.get("/", (req, res) => {
+  res.render("pages/landing.ejs");
 });
 
 // Legal and Payment Pages

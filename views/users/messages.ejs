@@ -19,29 +19,43 @@
     <div class="card border rounded-4 overflow-hidden shadow-sm" style="min-height: 600px;">
       <div class="row g-0 h-100" style="min-height: 600px;">
         <!-- Conversation List -->
-        <div class="col-12 col-md-4 border-end bg-white">
+        <div class="col-12 col-md-4 border-end bg-white" id="message-list-panel">
           <div class="p-3 border-bottom sticky-top bg-white" style="z-index: 5;">
             <div class="input-group rounded-pill border overflow-hidden bg-light px-2" style="border-color: #ddd !important;">
               <span class="input-group-text border-0 bg-transparent text-muted"><i class="fa-solid fa-magnifying-glass small"></i></span>
-              <input type="text" class="form-control border-0 bg-transparent py-2 small" placeholder="Search messages">
+              <input type="text" class="form-control border-0 bg-transparent py-2 small" placeholder="Search messages" id="message-search-input">
             </div>
           </div>
           
           <div class="conversation-list overflow-auto" style="max-height: 530px;">
              <% if (allMessages && allMessages.length > 0) { %>
-               <% for(let msg of allMessages) { %>
-                 <div class="conversation-item p-3 border-bottom hover-bg-light pointer-cursor <%= !msg.isRead ? 'active-message' : '' %>">
+               <% for(let i = 0; i < allMessages.length; i++) { let msg = allMessages[i]; %>
+                 <div class="conversation-item p-3 border-bottom hover-bg-light pointer-cursor <%= !msg.isRead ? 'unread-message' : '' %>"
+                      data-index="<%= i %>"
+                      data-id="<%= msg._id %>"
+                      data-sender="<%= msg.sender ? msg.sender.username : 'System' %>"
+                      data-content="<%- msg.content.replace(/"/g, '&quot;').replace(/'/g, '&#39;') %>"
+                      data-listing="<%= msg.listing ? msg.listing.title : '' %>"
+                      data-date="<%= msg.createdAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>"
+                      data-time="<%= msg.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>"
+                      data-isread="<%= msg.isRead %>">
                     <div class="d-flex gap-3">
-                       <div class="bg-brand text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                       <div class="msg-avatar bg-brand text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
                           <i class="fa-solid fa-suitcase"></i>
                        </div>
                        <div class="flex-grow-1 overflow-hidden">
                           <div class="d-flex justify-content-between align-items-baseline">
                              <h6 class="fw-bold mb-0 text-truncate"><%= msg.sender ? msg.sender.username : "System" %></h6>
-                             <span class="text-muted small"><%= msg.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></span>
+                             <span class="text-muted small flex-shrink-0 ms-2"><%= msg.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></span>
                           </div>
-                          <p class="text-muted small mb-0 text-truncate fw-medium text-dark"><%= msg.content %></p>
+                          <% if(msg.listing) { %>
+                            <p class="text-muted x-small mb-0 text-truncate"><i class="fa-solid fa-house-chimney me-1"></i><%= msg.listing.title %></p>
+                          <% } %>
+                          <p class="small mb-0 text-truncate mt-1 <%= !msg.isRead ? 'fw-bold text-dark' : 'text-muted' %>"><%= msg.content %></p>
                        </div>
+                       <% if(!msg.isRead) { %>
+                         <span class="unread-dot bg-brand rounded-circle flex-shrink-0 align-self-center" style="width: 10px; height: 10px;"></span>
+                       <% } %>
                     </div>
                  </div>
                <% } %>
@@ -54,15 +68,68 @@
           </div>
         </div>
 
-        <!-- Chat Area (Placeholder) -->
-        <div class="col-md-8 d-none d-md-flex flex-column bg-light">
-          <div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 p-5 text-center">
+        <!-- Chat Detail Area -->
+        <div class="col-md-8 d-none d-md-flex flex-column bg-light" id="message-detail-panel">
+          <!-- Placeholder (shown when no message selected) -->
+          <div id="detail-placeholder" class="d-flex flex-column align-items-center justify-content-center flex-grow-1 p-5 text-center">
             <div class="bg-white rounded-circle shadow-sm p-4 mb-4">
               <i class="fa-solid fa-comments text-brand" style="font-size: 3rem;"></i>
             </div>
             <h4 class="fw-bold">Select a message</h4>
             <p class="text-muted px-md-5">Choose a conversation from the list to view the details or start a new message with a host.</p>
             <a href="/listings" class="btn btn-dark rounded-pill px-4 py-2 mt-2 fw-bold">Explore Listings</a>
+          </div>
+
+          <!-- Detail View (shown when a message is selected) -->
+          <div id="detail-content" class="d-none flex-column h-100">
+            <!-- Header -->
+            <div class="d-flex align-items-center gap-3 p-4 border-bottom bg-white">
+              <div class="bg-brand text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 48px; height: 48px;">
+                <i class="fa-solid fa-suitcase"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h5 class="fw-bold mb-0" id="detail-sender"></h5>
+                <p class="text-muted small mb-0" id="detail-listing-ref"></p>
+              </div>
+              <span class="text-muted small" id="detail-date"></span>
+            </div>
+            
+            <!-- Message Body -->
+            <div class="flex-grow-1 overflow-auto p-4">
+              <div class="bg-white rounded-4 shadow-sm p-4 border">
+                <p class="mb-0 lh-lg" id="detail-body" style="white-space: pre-wrap;"></p>
+              </div>
+              <div class="text-center text-muted small mt-3" id="detail-time"></div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-3 border-top bg-white">
+              <div class="text-center text-muted small">
+                <i class="fa-solid fa-lock me-1"></i> This is an automated booking notification.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Detail Panel (hidden by default) -->
+        <div class="col-12 d-md-none d-none bg-white" id="mobile-detail-panel" style="min-height: 600px;">
+          <div class="d-flex align-items-center gap-3 p-3 border-bottom bg-white sticky-top" style="z-index: 5;">
+            <button class="btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; padding: 0;" id="mobile-back-btn">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <div class="bg-brand text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+              <i class="fa-solid fa-suitcase small"></i>
+            </div>
+            <div>
+              <h6 class="fw-bold mb-0" id="mobile-detail-sender"></h6>
+              <p class="text-muted x-small mb-0" id="mobile-detail-listing-ref"></p>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="bg-light rounded-4 p-4 border">
+              <p class="mb-0 lh-lg" id="mobile-detail-body" style="white-space: pre-wrap;"></p>
+            </div>
+            <div class="text-center text-muted small mt-3" id="mobile-detail-time"></div>
           </div>
         </div>
       </div>
@@ -75,11 +142,146 @@
     transition: background 0.2s;
     cursor: pointer;
   }
-  .active-message {
+  .conversation-item:hover {
     background-color: #f7f7f7;
-    border-left: 4px solid var(--brand-color);
   }
-  .hover-bg-light:hover {
-    background-color: #f7f7f7;
+  .conversation-item.active-item {
+    background-color: #f0f0f0;
+    border-left: 4px solid var(--brand-color, #FF385C) !important;
+  }
+  .unread-message {
+    background-color: #fef6f8;
+  }
+  .unread-dot {
+    display: inline-block;
+  }
+  .x-small {
+    font-size: 0.75rem;
+  }
+  .pointer-cursor {
+    cursor: pointer;
+  }
+  #detail-content.d-flex-active {
+    display: flex !important;
   }
 </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const items = document.querySelectorAll(".conversation-item");
+  const placeholder = document.getElementById("detail-placeholder");
+  const detailContent = document.getElementById("detail-content");
+  const messageListPanel = document.getElementById("message-list-panel");
+  const mobileDetailPanel = document.getElementById("mobile-detail-panel");
+  const mobileBackBtn = document.getElementById("mobile-back-btn");
+  const searchInput = document.getElementById("message-search-input");
+
+  // Desktop detail elements
+  const detailSender = document.getElementById("detail-sender");
+  const detailListingRef = document.getElementById("detail-listing-ref");
+  const detailDate = document.getElementById("detail-date");
+  const detailBody = document.getElementById("detail-body");
+  const detailTime = document.getElementById("detail-time");
+
+  // Mobile detail elements
+  const mobileDetailSender = document.getElementById("mobile-detail-sender");
+  const mobileDetailListingRef = document.getElementById("mobile-detail-listing-ref");
+  const mobileDetailBody = document.getElementById("mobile-detail-body");
+  const mobileDetailTime = document.getElementById("mobile-detail-time");
+
+  function isMobile() {
+    return window.innerWidth < 768;
+  }
+
+  function showMessage(item) {
+    const sender = item.dataset.sender;
+    const content = item.dataset.content;
+    const listing = item.dataset.listing;
+    const date = item.dataset.date;
+    const time = item.dataset.time;
+    const msgId = item.dataset.id;
+
+    // Highlight active item
+    items.forEach(i => i.classList.remove("active-item"));
+    item.classList.add("active-item");
+
+    // Mark as read visually
+    item.classList.remove("unread-message");
+    const contentPreview = item.querySelector("p.small");
+    if (contentPreview) {
+      contentPreview.classList.remove("fw-bold", "text-dark");
+      contentPreview.classList.add("text-muted");
+    }
+    const dot = item.querySelector(".unread-dot");
+    if (dot) dot.remove();
+
+    // Mark as read on server
+    if (item.dataset.isread === "false") {
+      item.dataset.isread = "true";
+      fetch(`/messages/${msgId}/read`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" }
+      }).catch(err => console.error("Failed to mark as read:", err));
+    }
+
+    const listingText = listing ? `Re: ${listing}` : "Booking Notification";
+
+    if (isMobile()) {
+      // Mobile: swap panels
+      messageListPanel.classList.add("d-none");
+      mobileDetailPanel.classList.remove("d-none");
+
+      mobileDetailSender.innerText = sender;
+      mobileDetailListingRef.innerText = listingText;
+      mobileDetailBody.innerText = content;
+      mobileDetailTime.innerText = `${date} at ${time}`;
+    } else {
+      // Desktop: show detail panel
+      placeholder.classList.add("d-none");
+      detailContent.classList.remove("d-none");
+      detailContent.classList.add("d-flex");
+
+      detailSender.innerText = sender;
+      detailListingRef.innerText = listingText;
+      detailDate.innerText = date;
+      detailBody.innerText = content;
+      detailTime.innerText = time;
+    }
+  }
+
+  // Click handlers for conversation items
+  items.forEach(item => {
+    item.addEventListener("click", () => showMessage(item));
+  });
+
+  // Mobile back button
+  if (mobileBackBtn) {
+    mobileBackBtn.addEventListener("click", () => {
+      mobileDetailPanel.classList.add("d-none");
+      messageListPanel.classList.remove("d-none");
+    });
+  }
+
+  // Search filter
+  if (searchInput) {
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase();
+      items.forEach(item => {
+        const sender = (item.dataset.sender || "").toLowerCase();
+        const content = (item.dataset.content || "").toLowerCase();
+        const listing = (item.dataset.listing || "").toLowerCase();
+        if (sender.includes(query) || content.includes(query) || listing.includes(query)) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
+  }
+
+  // Auto-select first message on desktop
+  if (!isMobile() && items.length > 0) {
+    showMessage(items[0]);
+  }
+});
+</script>
