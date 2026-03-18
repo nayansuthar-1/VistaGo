@@ -148,7 +148,7 @@ router.get("/:id",  async (req, res) => {
   }
 
   // Fetch all bookings for this listing to disable dates in calendar
-  const bookings = await Booking.find({ listing: id });
+  const bookings = await Booking.find({ listing: id, status: 'confirmed' });
   const bookedDates = bookings.map(b => ({
     from: b.checkIn,
     to: b.checkOut
@@ -160,7 +160,7 @@ router.get("/:id",  async (req, res) => {
     userBooking = await Booking.findOne({ 
       listing: id, 
       user: req.user._id,
-      status: { $in: ['pending', 'confirmed'] } 
+      status: 'confirmed'
     });
   }
 
@@ -289,9 +289,10 @@ router.post("/:id/reserve", isLoggedIn, wrapAsync(async (req, res) => {
     let { id } = req.params;
     let { checkIn, checkOut, nights, guests, totalPrice } = req.body.booking;
 
-    // Availability Check (Double check)
+    // Availability Check (Double check) - Only look for CONFIRMED bookings
     const overlappingBooking = await Booking.findOne({
         listing: id,
+        status: "confirmed",
         $or: [
             {
                 checkIn: { $lt: new Date(checkOut) },
@@ -354,7 +355,34 @@ router.post("/verify-payment", isLoggedIn, wrapAsync(async (req, res) => {
     const digest = shasum.digest("hex");
 
     if (digest === razorpay_signature) {
-        // Payment is legit
+        // Final Availability check before confirming
+        const existingBooking = await Booking.findById(bookingId).populate("listing");
+        if (!existingBooking) {
+            return res.status(404).json({ success: false, message: "Booking not found" });
+        }
+
+        const overlappingBooking = await Booking.findOne({
+            listing: existingBooking.listing._id,
+            status: "confirmed",
+            _id: { $ne: bookingId },
+            $or: [
+                {
+                    checkIn: { $lt: existingBooking.checkOut },
+                    checkOut: { $gt: existingBooking.checkIn }
+                }
+            ]
+        });
+
+        if (overlappingBooking) {
+            // This is a rare race condition where two people paid for the same dates
+            // In a real app, you would initiate an automated refund here
+            return res.status(400).json({ 
+                success: false, 
+                message: "Unfortunately, these dates were just booked by someone else. A refund will be initiated." 
+            });
+        }
+
+        // Payment is legit and dates are still free
         const booking = await Booking.findByIdAndUpdate(bookingId, {
             status: "confirmed",
             paymentStatus: "paid",
