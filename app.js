@@ -171,16 +171,4 @@ app.use((req, res) => {
   res.status(404).render("error.ejs");
 });
 
-// Self-ping script to keep the app awake on Render's free tier
-const https = require("https");
-const pingUrl = process.env.RENDER_EXTERNAL_URL;
 
-if (pingUrl) {
-  setInterval(() => {
-    https.get(pingUrl, (res) => {
-      console.log(`[KeepAlive] Pinged ${pingUrl} - Status: ${res.statusCode}`);
-    }).on("error", (err) => {
-      console.error(`[KeepAlive] Error pinging ${pingUrl}:`, err.message);
-    });
-  }, 14 * 60 * 1000); // 14 minutes
-}
